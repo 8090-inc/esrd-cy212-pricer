@@ -1,0 +1,82 @@
+# ESRD Pricing Rules: CY2021 CALCULATION ENGINE (ESCAL212)
+---
+- rule_id: CAL-001
+  name: Date of Birth Validation
+  description: Reject claims where DOB is missing or invalid.
+  priority: 100
+  conditions:
+    - B_DOB_DATE == 0 OR B_DOB_DATE is NOT NUMERIC
+  actions:
+    - set: 
+        variable: PPS_RTC
+        value: 54
+    - command: EXIT
+---
+- rule_id: CAL-002
+  name: Base Wage Amount Initialization
+  description: Calculate the unadjusted base wage amount using labor and non-labor national averages.
+  priority: 90
+  conditions: []
+  actions:
+    - calculate:
+        variable: H_BUN_NAT_LABOR_AMT
+        formula: (BUNDLED_BASE_PMT_RATE * BUN_NAT_LABOR_PCT) * BUN_CBSA_W_INDEX
+    - calculate:
+        variable: H_BUN_NAT_NONLABOR_AMT
+        formula: BUNDLED_BASE_PMT_RATE * BUN_NAT_NONLABOR_PCT
+    - calculate:
+        variable: H_BUN_BASE_WAGE_AMT
+        formula: H_BUN_NAT_LABOR_AMT + H_BUN_NAT_NONLABOR_AMT
+---
+- rule_id: CAL-003A
+  name: Age Adjustment Factor (Pediatric Hemo)
+  description: Set the age multiplier for pediatric hemodialysis patients.
+  priority: 80
+  conditions:
+    - H_PATIENT_AGE < 13
+    - B_REV_CODE IN ["0821", "0881"]
+  actions:
+    - set:
+        variable: H_BUN_AGE_FACTOR
+        value: 1.306
+---
+- rule_id: CAL-003B
+  name: Age Adjustment Factor (Adult 18-44)
+  description: Set the age multiplier for adult patients between 18 and 44.
+  priority: 80
+  conditions:
+    - H_PATIENT_AGE >= 18
+    - H_PATIENT_AGE <= 44
+  actions:
+    - set:
+        variable: H_BUN_AGE_FACTOR
+        value: 1.257
+---
+- rule_id: CAL-004
+  name: BSA Calculation and Adjustment
+  description: Calculate BSA and set the adjustment factor for adult patients.
+  priority: 70
+  conditions:
+    - H_PATIENT_AGE > 17
+  actions:
+    - calculate:
+        variable: H_BUN_BSA
+        formula: 0.007184 * (B_PATIENT_HGT ^ 0.725) * (B_PATIENT_WGT ^ 0.425)
+    - calculate:
+        variable: H_BUN_BSA_FACTOR
+        formula: 1.032 ^ ((H_BUN_BSA - 1.90) / 0.1)
+---
+- rule_id: CAL-005
+  name: Low BMI Adjustment
+  description: Apply adjustments for low BMI in adult patients.
+  priority: 60
+  conditions:
+    - H_PATIENT_AGE > 17
+    - (B_PATIENT_WGT / (B_PATIENT_HGT ^ 2)) * 10000 < 18.5
+  actions:
+    - set:
+        variable: H_BUN_BMI_FACTOR
+        value: 1.017
+    - set:
+        variable: LOW_BMI_TRACK
+        value: "Y"

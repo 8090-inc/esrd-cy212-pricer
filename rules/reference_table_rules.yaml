@@ -1,0 +1,58 @@
+# ESRD Pricing Rules: REFERENCE TABLES
+---
+- rule_id: REF-WAGE-001
+  name: Geographic Wage Index Adjustment Lookup
+  description: The system uses geographic data to lookup the specific location-based wage index for adjusting the labor portion of the ESRD base rate.
+  priority: 100
+  conditions:
+    - field: provider.cbsa_code
+      operator: exists
+    - field: claim.billing_date
+      operator: exists
+  actions:
+    - define_lookup:
+        table_sources:
+          - BUNDCBSA
+          - BASECBSA
+          - ESCOM151  # Composite CBSA Wage Record (2006-2013)
+          - ESBUN210  # Bundled CBSA Wage Index (2011-Later)
+          - ESWRT151  # MSA Wage-Adjusted Rates
+        keys:
+          - provider.cbsa_code
+          - claim.billing_date_year
+        output:
+          variable: BUN_CBSA_W_INDEX
+          fallback: "Throw RTC Code 60/61"
+---
+- rule_id: REF-BASE-001
+  name: Base Rate Lookup
+  description: The system looks up the National Base Payment Rate for the specific Calendar Year that the claim was processed in.
+  priority: 100
+  conditions:
+    - field: claim.billing_date
+      operator: exists
+  actions:
+    - define_lookup:
+        table_sources:
+          - BASERATE
+        keys:
+          - claim.billing_date_year
+        output:
+          variable: BUNDLED_BASE_PMT_RATE
+---
+- rule_id: REF-CHILD-001
+  name: Special Childrens Hospital Wage Index
+  description: There are 6 specific Children's Hospitals that have an explicit, hardcoded special wage index that overrides standard CBSA lookups.
+  priority: 100
+  conditions:
+    - field: provider.oscar_number
+      operator: in
+      value: "['093300', '263302', '393303', '393307', '403301', '453300']"
+  actions:
+    - define_lookup:
+        table_sources:
+          - ESCHI151 # Child Hospital Special Wage Index
+        keys:
+          - provider.oscar_number
+        output:
+          variable: SPECIAL_WAGE_INDEX

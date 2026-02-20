@@ -1,0 +1,67 @@
+# ESRD Pricing Rules: DATA DEFINITIONS & COPYBOOKS
+---
+- rule_id: CPY-RTC-001
+  name: Return Code Mappings (Valid Payment)
+  description: Maps internal PPS-RTC codes (00-49) to their business meaning (types of adjustments applied).
+  priority: 100
+  conditions: []
+  actions:
+    - define_map:
+        variable: PPS_RTC_PAYMENT_CODES
+        mapping:
+          "02": "No adjustments"
+          "03": "With Outlier"
+          "04": "With Acute Comorbid"
+          "05": "With Chronic Comorbid"
+          "08": "With Onset"
+          "10": "With Low Volume"
+          "11": "With Training"
+          "14": "With Pediatric"
+          "31": "With Low BMI"
+---
+- rule_id: CPY-RTC-002
+  name: Return Code Mappings (Rejection)
+  description: Maps internal PPS-RTC codes (50-99) to the specific reason the bill was rejected.
+  priority: 100
+  conditions: []
+  actions:
+    - define_map:
+        variable: PPS_RTC_REJECT_CODES
+        mapping:
+          "52": "Provider type NOT = '40' OR '41'"
+          "53": "Special payment indicator NOT = '1' OR blank"
+          "54": "Date of Birth NOT numeric OR = ZERO"
+          "55": "Patient Weight NOT numeric OR = ZERO"
+          "56": "Patient Height NOT numeric OR = ZERO"
+          "58": "Condition Code NOT IN {'  ','73','74','84','87'}"
+          "60": "CBSA wage adjusted rate record not found (Mainframe)"
+          "61": "CBSA wage index rate record not found (PC)"
+          "71": "Exceeds Maximum Height allowance"
+          "72": "Exceeds Maximum Weight allowance"
+          "98": "Claim through date before 04/01/05 or not numeric"
+---
+- rule_id: CPY-BILL-001
+  name: Core Billing Input Fields
+  description: Defines the required payload structure parsed from the FISS caller into the BILL-NEW-DATA copybook.
+  priority: 100
+  conditions: []
+  actions:
+    - define_schema:
+        structure:
+          B_COND_CODE: String(2)
+          B_REV_CODE: String(4)
+          B_PATIENT_HGT: Decimal(9,2)
+          B_PATIENT_WGT: Decimal(9,2)
+          B_THRU_DATE: Integer(8) # CCYYMMDD
+          B_DOB_DATE: Integer(8) # CCYYMMDD
+          P_NPI: String(8)
+          P_PROV_OSCAR: String(6)
+          P_GEO_CBSA: String(5)
+          P_SPEC_PYMT_IND: String(1)
+          P_PROV_TYPE: String(2)
+          P_ESRD_RATE: Decimal(9,2)
+          P_PROV_LOW_VOLUME_INDIC: String(1)
+          B_CLAIM_NUM_DIALYSIS_SESSIONS: Integer(2)
+          B_LINE_ITEM_DATE_SERVICE: Integer(8) # CCYYMMDD
+          B_DIALYSIS_START_DATE: Integer(8) # CCYYMMDD
+          COMORBID_DATA: Array[String(2), 6]

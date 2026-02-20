@@ -1,0 +1,32 @@
+# COBOL Codebase Reverse Engineering Plan
+
+## Milestones
+
+### V1: Initial Slice (Proof of Concept)
+- [x] Define the exact file scope for V1 ([ESDRV212](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESDRV212) and first half of [ESCAL212](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESCAL212)).
+- [/] Create Human-Readable Rule Book (Taxonomy, Conditions, Call Graphs).
+- [x] Create Machine-Readable Rule Schema (JSON Schema).
+- [x] Extract V1 Rules into JSON format.
+- [x] Create Python Import Test Harness ([rule_validator.py](file:///Users/rohitkelapure/.gemini/antigravity/brain/02c67b67-c339-4b7e-ac45-5b9e39d50ffd/rule_validator.py)) to baseline the discovery environment.
+- [x] Create System Architecture Documentation (UML Sequence and Component diagrams using Mermaid).
+- [x] Create Rule to Manual Linkage (Traceability Matrix with SME workflow narrative).
+- [x] Run acceptance testing / review with USER.
+
+### V2: Expanded Slice
+- [/] Expand the slice to cover the core calculation logic in [ESCAL212](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESCAL212).
+- [/] Update Human-Readable Rule Book with complex calculations.
+- [/] Extract V2 Rules into YAML format.
+- [ ] Run Python Test Harness against V2 Rules.
+- [ ] Update System Architecture Documentation.
+- [ ] Update Rule to Manual Linkage.
+- [ ] Run acceptance testing / review with USER.
+
+### V3: Complete Set (Every File Synthesized)
+- [x] Extract data definitions and validations from Copybooks ([BILLCPY](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/BILLCPY), [RTCCPY](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/RTCCPY), [WAGECPY](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/WAGECPY)).
+- [x] Extract rules from Reference Tables ([ESBUN210](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESBUN210), [ESCHI151](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESCHI151), [ESCOM151](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESCOM151), [ESWRT151](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESWRT151), [BASECBSA](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/BASECBSA), [BASERATE](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/BASERATE), [BUNDCBSA](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/BUNDCBSA), [DSCNTRL](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/DSCNTRL)).
+- [x] Synthesize rules from Historical Calculation Modules ([ESCAL056](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESCAL056) -> [ESCAL202](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESCAL202)).
+- [x] Exhaustively update Human-Readable Rule Book.
+- [x] Exhaustively update YAML DSL configurations.
+- [x] Run Python Test Harness against final full rule set.
+- [x] Update Traceability Matrix and Architecture for complete set.
+- [/] Run acceptance testing / review with USER.

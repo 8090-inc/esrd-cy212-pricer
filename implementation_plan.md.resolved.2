@@ -1,0 +1,62 @@
+# Implementation Plan: COBOL Pricer Reverse Engineering
+
+## Goal Description
+Reverse engineer the ESRD CY21.2 Mainframe Pricer COBOL codebase to create four key deliverables in three milestones (V1, V2, V3). The deliverables are:
+1. Human-Readable Rule Book
+2. Machine-Readable Rule Artifacts
+3. System Architecture Documentation (UML/Sequence)
+4. Rule to Manual Linkage (Source Code Provenance)
+
+## Deliverables & Approach
+
+### 1. Human-Readable Rule Book
+- **Goal:** Identify, analyze, and normalize legacy rules/edits.
+- **V1 Focus:** Identify rule boundaries in [ESDRV212](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESDRV212) (Driver) and the initialization/validation setup in [ESCAL212](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESCAL212) (Calculation).
+- **Format:** Markdown document detailing:
+  - **Rule Taxonomy:** Categorization of edits (e.g., Input Validation, Date Routing, Base Rate Calculation).
+  - **Conditions/Actions:** The `IF/ELSE` conditions translated into natural language business rules.
+  - **Call Graphs & Control Flow:** Visual text narratives of how control is passed (e.g., Driver -> Date Check -> Specific Year Calculator).
+  - **Data Definitions:** Mapping of variables from interface copybooks (e.g., [BILLCPY](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/BILLCPY), [RTCCPY](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/RTCCPY)).
+
+### 2. Machine-Readable Rule Artifacts
+- **Goal:** Model and export rules in a human-editable Domain Specific Language (DSL) with test harnesses and tooling.
+- **V1 Focus:** Establish the Drools DRL format and tooling baseline.
+- **Format & Tooling:**
+  - **DSL:** Drools Rule Language (`.drl`). This is an industry-standard, human-readable, and highly editable format simulating pseudo-code.
+  - **Artifacts:** `.drl` files containing the extracted rules for V1.
+  - **Test Harness:** A python script (`dsl_validator.py`) to parse the DRL files and validate basic structural syntax, ensuring the rules maintain valid compilation states.
+  - **Discovery Environment:** Utilizing the local file system and Python to ensure repeatable reruns.
+
+### 3. System Architecture Documentation
+- **Goal:** UML Asciidraw diagrams and sequence diagrams representing the system.
+- **V1 Focus:** The interaction between the macro components.
+- **Format:** Markdown files utilizing Mermaid.js for embedding UML.
+  - **Structural (Component Diagram):** Showing `DRIVER`, `CALCULATION MODULES`, and `COPYBOOKS` datasets.
+  - **Behavioral (Sequence Diagram):** Showing the temporal flow from external invocation -> [ESDRV212](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESDRV212) -> [ESCAL212](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESCAL212) -> Response.
+
+### 4. Rule to Manual Linkage (Traceability)
+- **Goal:** Source code provenance and SME validation workflows.
+- **V1 Focus:** Establishing the Traceability Matrix format tying the English rules to COBOL line numbers.
+- **Format:** Markdown Table acting as the linkage map.
+  - Columns: `Rule ID`, `Human Readable Description`, `File Name`, `Line Range`, `SME Review Status`.
+  - **Workflow Definition:** Documenting the sampling strategy and review cycles necessary for baseline approval.
+
+## Milestone Plan
+
+### V1: Proof of Concept Slice
+- **Scope:** Complete analysis of [ESDRV212](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESDRV212) (Driver) and lines 1-1000 of [ESCAL212](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESCAL212) (Initialization & Validation).
+- Produce the 4 deliverables for this slice to establish formats and templates.
+- **Verification:** USER review and approval of the formats, schema, and UML representations.
+
+### V2: Expanded Slice
+- **Scope:** Complete analysis of the remainder of [ESCAL212](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESCAL212) (Core Calculations like Outlier, Age Factors, BMI, QIP).
+- Expand the 4 deliverables using the V1 baselines.
+- Update test harnesses and run regression validations against the growing DRL rule set.
+
+### V3: Complete Set
+- **Scope:** Sweeping the remaining programs ([BASECBSA](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/BASECBSA), [WAGECPY](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/WAGECPY), legacy `ESCAL` modules if deemed necessary for the modern baseline).
+- Finalize all documentation.
+- **Verification:** Comprehensive acceptance testing executing the python test harness against all gathered rules.
+
+## User Review Required
+- Please review the transition to using Drools (`.drl`) as the Human-Editable DSL format instead of the JSON representation.

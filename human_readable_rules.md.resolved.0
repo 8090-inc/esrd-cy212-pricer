@@ -1,0 +1,57 @@
+# ESRD CY21.2 Pricer: Human-Readable Rule Book
+
+## Overview
+This document represents the extracted, human-readable logic for the ESRD CY21.2 Mainframe Pricer, generated through static analysis of the COBOL codebase. 
+This baseline document acts as a repository for establishing rule taxonomy, identifying rule boundaries, and defining business logic conditions and actions.
+
+---
+
+## 1. Module: [ESDRV212](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESDRV212) (Main Driver)
+
+### 1.1 Taxonomy & Context
+*   **Component Type:** Controller / Router
+*   **Purpose:** Initial entry point for pricing a claim. Checks bill dates, handles basic specific-case payment rates, attempts to find the correct Wage Index arrays to load, and ultimately routes the claim to the year-specific Calculation module (e.g., [ESCAL212](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESCAL212)).
+*   **Rule Categories:** 
+    *   Pre-Condition Validations
+    *   Direct Payment Edits (Overrides)
+    *   Calculation Routing (Call Graph Control)
+
+### 1.2 Identified Business Rules
+
+#### Rule DRV-001: Minimum Date Verification
+*   **Description:** The system must reject claims billed before a specified historical cut-off.
+*   **Condition:** If `B-THRU-DATE` (Bill Thru Date) is less than `20050401` (April 1st, 2005) OR if the `B-THRU-DATE` is not a valid number.
+*   **Action:** 
+    *   Set Return Code (`PPS-RTC`) to `98`.
+    *   Exit Driver logic immediately (skip all processing).
+
+#### Rule DRV-002: Exception Rate Verification
+*   **Description:** The system must ensure that if an exception rate exists on the bill, it is a valid numeric format.
+*   **Condition:** If `P-ESRD-RATE` (Exception Rate) is not numeric.
+*   **Action:** 
+    *   Set Return Code (`PPS-RTC`) to `50`.
+    *   Exit Driver logic immediately (skip all processing).
+
+#### Rule DRV-003: Pre-PPS Blended Payment Override
+*   **Description:** For claims occurring before the introduction of the Bundled Payment System (PPS) on January 1st, 2011, if the claim has an exception rate, that rate dictates the final payment amount without further calculation.
+*   **Condition:** If `B-THRU-DATE` is less than `20110101` AND `P-ESRD-RATE` > 0.
+*   **Action:**
+    *   Set Final Payment Amount (`PPS-FINAL-PAY-AMT`) to the Exception Rate (`P-ESRD-RATE`).
+    *   Set Return Code (`PPS-RTC`) to `01`.
+    *   Exit Driver logic immediately (do not call calculation subroutines).
+
+#### Rule DRV-004: Pacific Island Trust Territory Exception (2011-2013)
+*   **Description:** During the PPS transition period (Jan 2011 - Dec 2013), providers in the Pacific Island Trust Territories who have an exception rate are exempt from the blended methodology and are paid their exception rate directly.
+*   **Condition:** If `B-THRU-DATE` is between `20110101` and `20131231` (inclusive) AND Provider is in a Pacific Island Trust Territory (`P-PACIFIC-IS-TRUST-TERR` = '2') AND `P-ESRD-RATE` > 0.
+*   **Action:**
+    *   Set Final Payment Amount (`PPS-FINAL-PAY-AMT`) to the Exception Rate (`P-ESRD-RATE`).
+    *   Set Return Code (`PPS-RTC`) to `01`.
+    *   Exit Driver logic immediately (do not call calculation subroutines).
+
+#### Rule DRV-005: 2021.2 Calculation Routing
+*   **Description:** The system routes the claim to the calculation engine designed for Calendar Year 2021 processing.
+*   **Condition:** If `B-THRU-DATE` is between `20210101` and `20211231` (inclusive).
+*   **Action:**
+    *   Call subroutine [ESCAL212](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESCAL212).
+    *   Pass the following data structures: `BILL-NEW-DATA`, `PPS-DATA-ALL`, `WAGE-NEW-RATE-RECORD`, `COM-CBSA-WAGE-RECORD`, `BUN-CBSA-WAGE-RECORD`.
+    *   Exit Driver logic after return.

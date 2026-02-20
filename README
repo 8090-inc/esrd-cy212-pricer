@@ -1,0 +1,75 @@
+======================================================================= 00010058
+MU00.@BFN2699.ESNDM212                                                  00020058
+======================================================================= 00030058
+                                                                        00040055
+NOTE TO: Shared System Coordinators, MEDICARE Coordinators              00050055
+                                                                        00060055
+SUBJECT: End-Stage Renal Disese (ESRD) Prospective Payment System (PPS) 00070055
+         Pricer Release, Version 2021.2                                 00080058
+                                                                        00090055
+(February 17, 2021) --ACTION-- Corrected Network Fee Reduction          00100059
+                                                                        00110055
+This ESRD Pricer is PRODUCTION version 2021.2.                          00120058
+                                                                        00130055
+It includes the following changes/additions:                            00140055
+                                                                        00150055
+  - ESCAL212 - Replaces ESCAL211                                        00160058
+                                                                        00170055
+    - Corrected Network Fee Reduction                                   00180058
+                                                                        00190055
+                                                                        00200055
+  - ESDRV212 - Replaces ESDRV211                                        00210058
+                                                                        00220055
+    - New Driver Subprogram                                             00230055
+    - Makes CALL to ESCAL212                                            00240058
+                                                                        00250055
+                                                                        00260055
+**********************************************************************  00270055
+                                                                        00280055
+MU00.@BFN2699.ESNDM212, a partitioned data set (PDS) containing the     00290058
+Version 2021.2 code is at the CMS Data Center for users to get by       00300058
+Connect:Direct (Network DataMover).                                     00310055
+                                                                        00320055
+The 34 members listed below comprise the Pricer. The PDS only includes  00330055
+members that changed or are new since the previous release.             00340055
+The changed and new members are marked '**' and should be               00350055
+used in conjunction with the current production Pricer files for        00360055
+testing.                                                                00370055
+                                                                        00380055
+                                                                        00390055
+      NAME                                                              00400055
+      --------                                                          00410055
+     BASECBSA                                                           00420055
+     BASERATE                                                           00430055
+     BILLCPY                                                            00440057
+     BUNDCBSA                                                           00450057
+     DSCNTRL                                                            00460055
+     ESBUN211                                                           00470057
+     ESCAL056                                                           00480055
+     ESCAL062                                                           00490055
+     ESCAL070                                                           00500055
+     ESCAL071                                                           00510055
+     ESCAL080                                                           00520055
+     ESCAL091                                                           00530055
+     ESCAL100                                                           00540055
+     ESCAL117                                                           00550055
+     ESCAL122                                                           00560055
+     ESCAL130                                                           00570055
+     ESCAL140                                                           00580055
+     ESCAL151                                                           00590055
+     ESCAL160                                                           00600055
+     ESCAL170                                                           00610055
+     ESCAL171                                                           00620055
+     ESCAL180                                                           00630055
+     ESCAL191                                                           00640055
+     ESCAL200                                                           00650055
+     ESCAL202                                                           00660055
+ **  ESCAL212                                                           00670058
+     ESCHI151                                                           00680055
+     ESCOM151                                                           00690055
+ **  ESDRV212                                                           00700058
+     ESWRT151                                                           00710055
+ **  MANIFEST                                                           00720055
+ **  README                                                             00730055
+     RTCCPY                                                             00740055
+     WAGECPY                                                            00750055

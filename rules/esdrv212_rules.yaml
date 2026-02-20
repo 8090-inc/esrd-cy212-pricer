@@ -1,0 +1,70 @@
+# ESRD Pricing Rules: DRIVER VALIDATION & ROUTING (ESDRV212)
+---
+- rule_id: DRV-001
+  name: Date Cut-off Validation
+  description: Reject claims billed before the historical cut-off of 20050401 or invalid numeric dates.
+  priority: 100
+  conditions:
+    - B_THRU_DATE < 20050401 OR B_THRU_DATE is NOT NUMERIC
+  actions:
+    - set: 
+        variable: PPS_RTC
+        value: 98
+    - command: EXIT
+---
+- rule_id: DRV-002
+  name: Exception Rate Validation
+  description: Ensure the exception rate is a valid numeric.
+  priority: 90
+  conditions:
+    - P_ESRD_RATE is NOT NUMERIC
+  actions:
+    - set:
+        variable: PPS_RTC
+        value: 50
+    - command: EXIT
+---
+- rule_id: DRV-003
+  name: Pre-2011 Blended Payment Override
+  description: Honor Exception Rate for pre-2011 claims directly, bypassing standard PPS.
+  priority: 80
+  conditions:
+    - B_THRU_DATE < 20110101
+    - P_ESRD_RATE > 0
+  actions:
+    - map:
+        variable: PPS_FINAL_PAY_AMT
+        from: P_ESRD_RATE
+    - set:
+        variable: PPS_RTC
+        value: 1
+    - command: EXIT
+---
+- rule_id: DRV-004
+  name: Pacific Island Trust Territories Override (2011-2013)
+  description: Honor Exception Rate for Pacific Island Trust Territories during the transition period.
+  priority: 70
+  conditions:
+    - B_THRU_DATE >= 20110101
+    - B_THRU_DATE <= 20131231
+    - P_PACIFIC_IS_TRUST_TERR == "2"
+    - P_ESRD_RATE > 0
+  actions:
+    - map:
+        variable: PPS_FINAL_PAY_AMT
+        from: P_ESRD_RATE
+    - set:
+        variable: PPS_RTC
+        value: 1
+    - command: EXIT
+---
+- rule_id: DRV-005
+  name: CY2021 Routing
+  description: Route 2021 claims to the CY2021 calculation engine.
+  priority: 60
+  conditions:
+    - B_THRU_DATE >= 20210101
+    - B_THRU_DATE <= 20211231
+  actions:
+    - call_subroutine: ESCAL212
+    - command: EXIT

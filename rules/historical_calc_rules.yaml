@@ -1,0 +1,54 @@
+# ESRD Pricing Rules: HISTORICAL CALCULATION MODULES
+---
+- rule_id: HIST-CALC-001
+  name: Historical Calculation Routing Execution
+  description: The pricer dynamically executes a specific calculation subroutine corresponding to the bill date. The legacy modules (ESCAL056 through ESCAL202) implement identical core algorithmic sequences as ESCAL212, but utilize historical hardcoded scalars (e.g. legacy age multipliers, legacy base rates).
+  priority: 100
+  conditions:
+    - field: claim.billing_date_year
+      operator: exists
+  actions:
+    - define_strategy:
+        strategy_name: Calculation Engine Versioning
+        description: Execute the module corresponding to the bill date.
+        mappings:
+          - date_range: "<= 2005"
+            module: "ESCAL056"
+          - date_range: "2006"
+            module: "ESCAL062"
+          - date_range: "2007"
+            module: "ESCAL070"
+          - date_range: "2007"
+            module: "ESCAL071" # Minor version patch
+          - date_range: "2008"
+            module: "ESCAL080"
+          - date_range: "2009"
+            module: "ESCAL091"
+          - date_range: "2010"
+            module: "ESCAL100"
+          - date_range: "2011"
+            module: "ESCAL117"
+          - date_range: "2012"
+            module: "ESCAL122"
+          - date_range: "2013"
+            module: "ESCAL130"
+          - date_range: "2014"
+            module: "ESCAL140"
+          - date_range: "2015"
+            module: "ESCAL151"
+          - date_range: "2016"
+            module: "ESCAL160"
+          - date_range: "2017"
+            module: "ESCAL170"
+          - date_range: "2017"
+            module: "ESCAL171" # Minor version patch
+          - date_range: "2018"
+            module: "ESCAL180"
+          - date_range: "2019"
+            module: "ESCAL191"
+          - date_range: "2020"
+            module: "ESCAL200"
+          - date_range: "2020"
+            module: "ESCAL202" # Minor version patch
+          - date_range: "2021"
+            module: "ESCAL212" # Baseline modeled logic module

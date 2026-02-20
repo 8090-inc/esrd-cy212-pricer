@@ -1,0 +1,27 @@
+# COBOL Codebase Reverse Engineering Plan
+
+## Milestones
+
+### V1: Initial Slice (Proof of Concept)
+- [ ] Assess the codebase and identify a small, representative slice of the rules to reverse engineer.
+- [ ] Create Human-Readable Rule Book for the slice.
+- [ ] Create Machine-Readable Rule Artifacts for the slice.
+- [ ] Create System Architecture Documentation (UML/Sequence) for the slice.
+- [ ] Create Rule to Manual Linkage for the slice.
+- [ ] Run acceptance testing / review with USER.
+
+### V2: Expanded Slice
+- [ ] Expand the slice to cover a more complete set of related rules.
+- [ ] Update Human-Readable Rule Book.
+- [ ] Update Machine-Readable Rule Artifacts.
+- [ ] Update System Architecture Documentation.
+- [ ] Update Rule to Manual Linkage.
+- [ ] Run acceptance testing / review with USER.
+
+### V3: Complete Set
+- [ ] Expand to the remaining rules in the codebase.
+- [ ] Finalize Human-Readable Rule Book.
+- [ ] Finalize Machine-Readable Rule Artifacts.
+- [ ] Finalize System Architecture Documentation.
+- [ ] Finalize Rule to Manual Linkage.
+- [ ] Final acceptance testing / review.

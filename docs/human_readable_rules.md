@@ -1,0 +1,174 @@
+# ESRD CY21.2 Pricer: Human-Readable Rule Book
+
+## Overview
+This document represents the extracted, human-readable logic for the ESRD CY21.2 Mainframe Pricer, generated through static analysis of the COBOL codebase. 
+This baseline document acts as a repository for establishing rule taxonomy, identifying rule boundaries, and defining business logic conditions and actions.
+
+---
+
+## 1. Module: `ESDRV212` (Main Driver)
+
+### 1.1 Taxonomy & Context
+*   **Component Type:** Controller / Router
+*   **Purpose:** Initial entry point for pricing a claim. Checks bill dates, handles basic specific-case payment rates, attempts to find the correct Wage Index arrays to load, and ultimately routes the claim to the year-specific Calculation module (e.g., `ESCAL212`).
+*   **Rule Categories:** 
+    *   Pre-Condition Validations
+    *   Direct Payment Edits (Overrides)
+    *   Calculation Routing (Call Graph Control)
+
+### 1.2 Identified Business Rules
+
+#### Rule DRV-001: Minimum Date Verification
+*   **Description:** The system must reject claims billed before a specified historical cut-off.
+*   **Condition:** If `B-THRU-DATE` (Bill Thru Date) is less than `20050401` (April 1st, 2005) OR if the `B-THRU-DATE` is not a valid number.
+*   **Action:** 
+    *   Set Return Code (`PPS-RTC`) to `98`.
+    *   Exit Driver logic immediately (skip all processing).
+
+#### Rule DRV-002: Exception Rate Verification
+*   **Description:** The system must ensure that if an exception rate exists on the bill, it is a valid numeric format.
+*   **Condition:** If `P-ESRD-RATE` (Exception Rate) is not numeric.
+*   **Action:** 
+    *   Set Return Code (`PPS-RTC`) to `50`.
+    *   Exit Driver logic immediately (skip all processing).
+
+#### Rule DRV-003: Pre-PPS Blended Payment Override
+*   **Description:** For claims occurring before the introduction of the Bundled Payment System (PPS) on January 1st, 2011, if the claim has an exception rate, that rate dictates the final payment amount without further calculation.
+*   **Condition:** If `B-THRU-DATE` is less than `20110101` AND `P-ESRD-RATE` > 0.
+*   **Action:**
+    *   Set Final Payment Amount (`PPS-FINAL-PAY-AMT`) to the Exception Rate (`P-ESRD-RATE`).
+    *   Set Return Code (`PPS-RTC`) to `01`.
+    *   Exit Driver logic immediately (do not call calculation subroutines).
+
+#### Rule DRV-004: Pacific Island Trust Territory Exception (2011-2013)
+*   **Description:** During the PPS transition period (Jan 2011 - Dec 2013), providers in the Pacific Island Trust Territories who have an exception rate are exempt from the blended methodology and are paid their exception rate directly.
+*   **Condition:** If `B-THRU-DATE` is between `20110101` and `20131231` (inclusive) AND Provider is in a Pacific Island Trust Territory (`P-PACIFIC-IS-TRUST-TERR` = '2') AND `P-ESRD-RATE` > 0.
+*   **Action:**
+    *   Set Final Payment Amount (`PPS-FINAL-PAY-AMT`) to the Exception Rate (`P-ESRD-RATE`).
+    *   Set Return Code (`PPS-RTC`) to `01`.
+    *   Exit Driver logic immediately (do not call calculation subroutines).
+
+#### Rule DRV-005: 2021.2 Calculation Routing
+*   **Description:** The system routes the claim to the calculation engine designed for Calendar Year 2021 processing.
+*   **Condition:** If `B-THRU-DATE` is between `20210101` and `20211231` (inclusive).
+*   **Action:**
+    *   Call subroutine `ESCAL212`.
+    *   Pass the following data structures: `BILL-NEW-DATA`, `PPS-DATA-ALL`, `WAGE-NEW-RATE-RECORD`, `COM-CBSA-WAGE-RECORD`, `BUN-CBSA-WAGE-RECORD`.
+    *   Exit Driver logic after return.
+
+---
+
+## 2. Module: `ESCAL212` (CY 2021 Calculation Engine)
+
+### 2.1 Taxonomy & Context
+*   **Component Type:** Business Logic & Mathematical Engine
+*   **Purpose:** The core calculation logic for processing ESRD claims after the `ESDRV212` has performed initial verifications and loaded the relevant datasets.
+*   **Rule Categories:** 
+    *   Condition Code Validation
+    *   Base Rate Initialization
+    *   Patient Characteristic Adjustments (Age, BSA, BMI)
+    *   QIP/Penalty Reductions
+
+### 2.2 Identified Business Rules
+
+#### Rule CAL-001: General Claim Validation
+*   **Description:** The system must reject claims missing specific condition codes or with missing/invalid Date of Birth, Weight, Height, or Dialysis Session Counts.
+*   **Condition:** If `B-COND-CODE` is not 73, 74, 84, 87, or blank; OR if DOB is invalid; OR if Weight > 500 or Height > 300.
+*   **Action:** 
+    *   Set appropriate specific Return Code (`PPS-RTC` array of 58, 54, 55, 56, 71, 72).
+    *   Halt calculation.
+
+#### Rule CAL-002: Base Wage Amount Calculation
+*   **Description:** Calculate the Adjusted PPS Base Rate using the pre-defined labor and non-labor percentages against the national Base Rate, adjusted by the local Wage Index. 
+*   **Condition:** Pre-calculation step (Runs unconditionally if valid claim).
+*   **Action:**
+    *   `Labor Amount` = (`BUNDLED-BASE-PMT-RATE` * `BUN-NAT-LABOR-PCT`) * `BUN-CBSA-W-INDEX`.
+    *   `Non-Labor Amount` = `BUNDLED-BASE-PMT-RATE` * `BUN-NAT-NONLABOR-PCT`.
+    *   `Base Wage Amount` = `Labor Amount` + `Non-Labor Amount`.
+
+#### Rule CAL-003: Age Adjustment Multiplier
+*   **Description:** Determine the Age Multiplier based on the calculated patient age (current year - DOB year) and the specific dialysis mode (Hemo vs PD).
+*   **Condition & Action Mapping:**
+    *   If Age < 13 & Mode = Hemo -> Multiplier = `1.306` (EB-AGE-LT-13-HEMO-MODE)
+    *   If Age < 13 & Mode = PD -> Multiplier = `1.063` (EB-AGE-LT-13-PD-MODE)
+    *   If Age 13-17 & Mode = Hemo -> Multiplier = `1.327` (EB-AGE-13-17-HEMO-MODE)
+    *   If Age 13-17 & Mode = PD -> Multiplier = `1.102` (EB-AGE-13-17-PD-MODE)
+    *   If Age 18-44 -> Multiplier = `1.257` (CM-AGE-18-44)
+    *   If Age 45-59 -> Multiplier = `1.068` (CM-AGE-45-59)
+    *   If Age 60-69 -> Multiplier = `1.070` (CM-AGE-60-69)
+    *   If Age 70-79 -> Multiplier = `1.000` (CM-AGE-70-79)
+    *   If Age 80+ -> Multiplier = `1.109` (CM-AGE-80-PLUS)
+
+#### Rule CAL-004: BSA Factor Calculation
+*   **Description:** Calculate the patient's Body Surface Area using the traditional medical formula, then determine the adjustment factor if the patient is over 17.
+*   **Formula:** BSA = 0.007184 * (Height^0.725) * (Weight^0.425).
+*   **Condition:** If Age > 17.
+*   **Action:** 
+    *   `BSA Factor` = `CM-BSA` (1.032) ^ ((`Calculated BSA` - `BSA-NATIONAL-AVERAGE` [1.90]) / 0.1).
+    *   *(Note: If Age <= 17, `BSA Factor` = 1.000)*
+
+#### Rule CAL-005: Low BMI Adjustment
+*   **Description:** Apply a case-mix multiplier for adult patients who are significantly underweight.
+*   **Formula:** BMI = (Weight / (Height^2)) * 10000.
+*   **Condition:** If Age > 17 AND Calculated BMI < 18.5.
+*   **Action:** 
+    *   Set `BMI Factor` = `CM-BMI-LT-18-5` (1.017).
+    *   *(Note: Otherwise, `BMI Factor` = 1.000)*
+
+---
+
+## 3. Data Dictionary: Interfaces & Copybooks
+
+### 3.1 `RTCCPY` (Return Codes)
+The system uses `PPS-RTC` to signal calculation success, failure, or applied adjustments back to the driver/FISS.
+*   **Payment Adjustments (00-49):**
+    *   `02`: No adjustments.
+    *   `03`: With Outlier.
+    *   `04`: With Acute Comorbid.
+    *   `05`: With Chronic Comorbid.
+    *   `08`: With Onset.
+    *   `10`: With Low Volume.
+    *   `11`: With Training.
+    *   `14`: With Pediatric.
+    *   `31`: With Low BMI.
+*   **Rejection Codes (50-99):**
+    *   `52`: Invalid Provider Type (Not 40 or 41).
+    *   `54`: Invalid Date of Birth.
+    *   `55`/`56`: Invalid Height or Weight.
+    *   `58`: Invalid Condition Code.
+    *   `60`/`61`: CBSA Wage Index not found.
+
+### 3.2 `BILLCPY` (Input Interface payload)
+The caller (e.g. FISS system) passes a populated payload that must adhere to this contract.
+*   `B-REV-CODE` (String 4): The specific Revenue Code (e.g., "0821" or "0881" for Hemo vs PD).
+*   `B-COND-CODE` (String 2): Claim Condition Code (e.g., 73, 74, 84, 87).
+*   `B-PATIENT-HGT` / `B-PATIENT-WGT` (Decimal): Patient bio-metrics used for BMI and BSA calculation.
+*   `B-THRU-DATE`: (CCYYMMDD): Billing End Date used for module routing.
+*   `P-ESRD-RATE` (Decimal): The specific overriding exception rate for transition/old claims.
+
+---
+
+## 4. Reference Data Tables (Geographic Adjustments & Rates)
+
+The system utilizes several pre-defined reference tables, either as hardcoded arrays in COBOL Copybooks or as external flat files, to define historical geographic wage indexes and base payment rates.
+
+*   `ESCOM151`: Composite CBSA Wage Record. Contains hardcoded CBSA values mapping to Wage Index multipliers for Calendar Years 2006 through 2013.
+*   `ESBUN210`: Bundled CBSA Wage Index. Contains hardcoded CBSA values mapping to Wage Index multipliers for the fully implemented bundled payment years (2011 and later).
+*   `ESWRT151`: MSA Wage-Adjusted Rates. Maps older Metropolitan Statistical Area (MSA) codes to their historical rates.
+*   `BASECBSA` & `BUNDCBSA`: Flat-file representations of the CBSA data arrays.
+*   `BASERATE`: Flat file containing the National Base Payment Rate by year.
+*   `ESCHI151`: **Special Children's Wage Index.** A customized, hardcoded override array strictly containing exactly 6 specific Provider OSCAR Numbers for Children's Hospitals (e.g. `093300`, `263302`) that trigger a specialized Wage Index overriding standard geographic calculations.
+
+---
+
+## 5. Historical Calculation Engines (Legacy Modules)
+
+While `ESCAL212` represents the modern baseline of the calculation pricing rules, the source codebase includes 20 specific legacy legacy execution modules (`ESCAL056` through `ESCAL202`) intended to price retrospective claims precisely based on the static data applicable during those years.
+
+### Rule HIST-001: Historical Versioning & Routing
+The controller (`ESDRV212`) selects the appropriate execution engine by directly mapping the Calendar Year of the Bill Date to a particular static module. The executed rules remain structurally identical to the logic documented for `ESCAL212`, except they substitute historically locked hardcoded values for variables such as Base Rates, low-volume thresholds, or distinct Age Multipliers mapping to those specific years. 
+*   **<= 2005**: Calls `ESCAL056`
+*   **2006 -> 2009**: Calls `ESCAL062`, `070`, `071`(patch), `080`, `091` respectively.
+*   **2010 -> 2013**: Calls `ESCAL100`, `117`, `122`, `130` respectively. 
+*   **2014 -> 2018**: Calls `ESCAL140`, `151`, `160`, `170`, `171`(patch), `180` respectively.
+*   **2019 -> 2021**: Calls `ESCAL191`, `200`, `202`(patch) and `212` respectively.

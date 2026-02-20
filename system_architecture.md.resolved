@@ -1,0 +1,129 @@
+# ESRD CY21.2 System Architecture
+
+This document contains the System Architecture documentation, reverse engineered from the legacy COBOL ESRD Pricer.
+
+## 1. High-Level Component Diagram
+This diagram illustrates the macro-level structure of the ESRD Pricer. [ESDRV212](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESDRV212) acts as the primary orchestrator, interfacing with various shared datasets (Copybooks) and dispatching to year-specific calculation modules.
+
+```mermaid
+graph TD
+    classDef main fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef db fill:#bbf,stroke:#333,stroke-width:1px;
+    classDef calc fill:#bfb,stroke:#333,stroke-width:1px;
+    
+    Ext[External FISS System] -->|Passes BILLCPY & RTCCPY Data| Driver(ESDRV212 Driver)
+    class Driver main
+    
+    subgraph Data Copylibs
+        WAGE[WAGECPY]
+        RTC[RTCCPY]
+        BILL[BILLCPY]
+        BILL --> WAGE
+    end
+    class WAGE,RTC,BILL db
+    
+    subgraph Reference Tables
+        ESCHI[ESCHI151 - Childrens Hosp]
+        ESWRT[ESWRT151 - MSA Wage]
+        ESCOM[ESCOM151 - Composite CBSA]
+        ESBUN[ESBUN210 - Bundled CBSA]
+        BRATE[BASERATE - Flat File]
+        BCBSA[BASECBSA - Flat File]
+        BUNCBSA[BUNDCBSA - Flat File]
+    end
+    class ESCHI,ESWRT,ESCOM,ESBUN,BRATE,BCBSA,BUNCBSA db
+    
+    Driver -->|Loads| ESCHI
+    Driver -->|Loads| ESWRT
+    Driver -->|Loads| ESCOM
+    Driver -->|Loads| ESBUN
+    
+    subgraph Calculation Engines
+        C15[ESCAL151]
+        C16[ESCAL160]
+        C17[ESCAL170/171]
+        C18[ESCAL180]
+        C19[ESCAL191]
+        C20[ESCAL200/202]
+        C21[ESCAL212...]
+    end
+    class C15,C16,C17,C18,C19,C20,C21 calc
+    
+    Driver -->|Dispatches based on B-THRU-DATE| C21
+    
+    C21 -->|Returns PPS-DATA-ALL & RTC| Driver
+    Driver -->|Returns Final Calculation| Ext
+```
+
+## 2. Sequence Diagram: Primary Execution Flow
+This sequence diagram details the runtime execution path for a standard 2021 claim entering the [ESDRV212](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESDRV212) driver.
+
+```mermaid
+sequenceDiagram
+    participant FISS as FISS (Calling System)
+    participant DRV as ESDRV212 (Driver)
+    participant CALC as ESCAL212 (CY2021 Calculator)
+    
+    FISS->>DRV: Invoke with BILL-NEW-DATA & PPS-DATA-ALL
+    activate DRV
+    Note over DRV: 0100-ENTER-DRIVER
+    DRV->>DRV: Initialize Variables (Clear PPS-DATA-ALL)
+    DRV->>DRV: Check Initial Validations (DRV-001, DRV-002)
+    
+    alt Pre-2011 Blended Override (DRV-003)
+        DRV->>FISS: Return Early with Payment Exception (RTC 01)
+    else 2011-2013 Pacific Island Override (DRV-004)
+        DRV->>FISS: Return Early with Payment Exception (RTC 01)
+    else Standard Execution Route
+        note over DRV: 0800-FIND-BUNDLED-CBSA-WI
+        DRV->>DRV: Search ESBUN210 Table for Wage Index
+        note over DRV: Dispatch Logic (DRV-005)
+        
+        alt B-THRU-DATE in 2021
+            DRV->>CALC: CALL ESCAL212 USING BILL-NEW-DATA, PPS-DATA-ALL, WAGE-REC
+            activate CALC
+            CALC->>CALC: Execute Pricing Calculation Logic
+            CALC-->>DRV: Return updated PPS-DATA-ALL & Return Code (RTC)
+            deactivate CALC
+            
+            DRV-->>FISS: Return Final Payment / Reject Code
+        end
+    end
+    deactivate DRV
+```
+
+## 3. Sequence Diagram: Internal Calculation Engine Flow (ESCAL212)
+This sequence diagram details the V2 internal calculation methodology after [ESDRV212](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESDRV212) routes the claim to the [ESCAL212](file:///Users/rohitkelapure/Downloads/ESRDCY212MainframePricerReleaseFiles/ESCAL212) module.
+
+```mermaid
+sequenceDiagram
+    participant DRV as ESDRV212 (Driver)
+    participant VAL as Validation (1000-)
+    participant INIT as Initialization (1200-)
+    participant CALC as Computation (2000-)
+    
+    DRV->>VAL: Invoke ESCAL212 Component
+    activate VAL
+    VAL->>VAL: Validate Claim Elements (CAL-001)
+    
+    alt Validation Failure (e.g. Invalid DOB/Height/Weight)
+        VAL-->>DRV: Return early with specific error code
+    else Validation Success
+        VAL->>INIT: Pass control
+        activate INIT
+        INIT->>INIT: Clear Working Storage Hold Variables
+        INIT->>INIT: Base Wage Initiation (CAL-002)
+        INIT->>CALC: Dispatch to Bundled Factors (2000-)
+        deactivate INIT
+        activate CALC
+        CALC->>CALC: Apply Age Multiplier (CAL-003)
+        CALC->>CALC: Apply BSA Math & Factor (CAL-004)
+        CALC->>CALC: Apply Low BMI Check & Factor (CAL-005)
+        CALC->>CALC: Apply Onset Time Adjustments
+        CALC->>CALC: Calculate Comorbid Multipliers
+        CALC->>CALC: Aggregate Adjusted Base Rate
+        CALC-->>DRV: Return Fully Priced Payload
+        deactivate CALC
+    end
+    deactivate VAL
+```
