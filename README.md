@@ -1,5 +1,7 @@
 # ESRD CY21.2 Mainframe Pricer - Reverse Engineering Artifacts
 
+CMS ESRD PPS Pricer v2021.2 — COBOL mainframe source code that calculates Medicare reimbursement for dialysis facility claims. Prices outpatient dialysis treatments for patients with End-Stage Renal Disease under the Prospective Payment System. Includes 25 calculation modules spanning rate years 2005–2021, a driver program (ESDRV212), bundled services logic (ESBUN210), copybooks for bill input/output, base rates, and wage indices. Repo also contains reverse-engineered artifacts: human-readable rule docs, YAML business logic, system architecture diagrams, and a Python validation harness.
+
 This repository contains both the original legacy COBOL source code for the Center for Medicare and Medicaid Services (CMS) End-Stage Renal Disease (ESRD) CY21.2 Pricer and the comprehensive suite of **reverse-engineered artifacts** generated from analyzing this codebase.
 
 ## Project Objective
