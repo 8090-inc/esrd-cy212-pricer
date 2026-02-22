@@ -4,6 +4,8 @@
   name: Date Cut-off Validation
   description: Reject claims billed before the historical cut-off of 20050401 or invalid numeric dates.
   priority: 100
+  policy_refs:
+    - "Internal/No policy citation found"
   conditions:
     - B_THRU_DATE < 20050401 OR B_THRU_DATE is NOT NUMERIC
   actions:
@@ -16,6 +18,8 @@
   name: Exception Rate Validation
   description: Ensure the exception rate is a valid numeric.
   priority: 90
+  policy_refs:
+    - "Internal/No policy citation found"
   conditions:
     - P_ESRD_RATE is NOT NUMERIC
   actions:
@@ -28,6 +32,8 @@
   name: Pre-2011 Blended Payment Override
   description: Honor Exception Rate for pre-2011 claims directly, bypassing standard PPS.
   priority: 80
+  policy_refs:
+    - "Pub 100-02 Ch 11 §70 (ESRD PPS Transition Period / Exception Rates)"
   conditions:
     - B_THRU_DATE < 20110101
     - P_ESRD_RATE > 0
@@ -44,6 +50,8 @@
   name: Pacific Island Trust Territories Override (2011-2013)
   description: Honor Exception Rate for Pacific Island Trust Territories during the transition period.
   priority: 70
+  policy_refs:
+    - "Pub 100-02 Ch 11 §70 (ESRD PPS Transition Period / Exception Rates)"
   conditions:
     - B_THRU_DATE >= 20110101
     - B_THRU_DATE <= 20131231
@@ -62,9 +70,258 @@
   name: CY2021 Routing
   description: Route 2021 claims to the CY2021 calculation engine.
   priority: 60
+  policy_refs:
+    - "Internal/No policy citation found"
   conditions:
     - B_THRU_DATE >= 20210101
     - B_THRU_DATE <= 20211231
   actions:
     - call_subroutine: ESCAL212
+    - command: EXIT
+---
+- rule_id: DRV-006
+  name: CY2020 H2 Routing (Jul-Dec)
+  description: Route claims in 2020-07-01 through 2020-12-31 to the CY2020.2 patch engine.
+  priority: 59
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20200701
+    - B_THRU_DATE <= 20201231
+  actions:
+    - call_subroutine: ESCAL202
+    - command: EXIT
+---
+- rule_id: DRV-007
+  name: CY2020 H1 Routing (Jan-Jun)
+  description: Route claims in 2020-01-01 through 2020-06-30 to the CY2020.0 engine.
+  priority: 58
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20200101
+    - B_THRU_DATE <= 20200630
+  actions:
+    - call_subroutine: ESCAL200
+    - command: EXIT
+---
+- rule_id: DRV-008
+  name: CY2019 Routing
+  description: Route 2019 claims to the CY2019 engine.
+  priority: 57
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20190101
+    - B_THRU_DATE <= 20191231
+  actions:
+    - call_subroutine: ESCAL191
+    - command: EXIT
+---
+- rule_id: DRV-009
+  name: CY2018 Routing
+  description: Route 2018 claims to the CY2018 engine.
+  priority: 56
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20180101
+    - B_THRU_DATE <= 20181231
+  actions:
+    - call_subroutine: ESCAL180
+    - command: EXIT
+---
+- rule_id: DRV-010
+  name: CY2017 H2 Routing (Jul-Dec)
+  description: Route claims in 2017-07-01 through 2017-12-31 to the CY2017.1 patch engine.
+  priority: 55
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20170701
+    - B_THRU_DATE <= 20171231
+  actions:
+    - call_subroutine: ESCAL171
+    - command: EXIT
+---
+- rule_id: DRV-011
+  name: CY2017 H1 Routing (Jan-Jun)
+  description: Route claims in 2017-01-01 through 2017-06-30 to the CY2017.0 engine.
+  priority: 54
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20170101
+    - B_THRU_DATE <= 20170630
+  actions:
+    - call_subroutine: ESCAL170
+    - command: EXIT
+---
+- rule_id: DRV-012
+  name: CY2016 Routing
+  description: Route 2016 claims to the CY2016 engine.
+  priority: 53
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20160101
+    - B_THRU_DATE <= 20161231
+  actions:
+    - call_subroutine: ESCAL160
+    - command: EXIT
+---
+- rule_id: DRV-013
+  name: CY2015 Routing
+  description: Route 2015 claims to the CY2015 engine.
+  priority: 52
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20150101
+    - B_THRU_DATE <= 20151231
+  actions:
+    - call_subroutine: ESCAL151
+    - command: EXIT
+---
+- rule_id: DRV-014
+  name: CY2014 Routing
+  description: Route 2014 claims to the CY2014 engine.
+  priority: 51
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20140101
+    - B_THRU_DATE <= 20141231
+  actions:
+    - call_subroutine: ESCAL140
+    - command: EXIT
+---
+- rule_id: DRV-015
+  name: CY2013 Routing
+  description: Route 2013 claims to the CY2013 engine.
+  priority: 50
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20130101
+    - B_THRU_DATE <= 20131231
+  actions:
+    - call_subroutine: ESCAL130
+    - command: EXIT
+---
+- rule_id: DRV-016
+  name: CY2012 Routing
+  description: Route 2012 claims to the CY2012 engine.
+  priority: 49
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20120101
+    - B_THRU_DATE <= 20121231
+  actions:
+    - call_subroutine: ESCAL122
+    - command: EXIT
+---
+- rule_id: DRV-017
+  name: CY2011 Routing
+  description: Route 2011 claims to the CY2011 engine.
+  priority: 48
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20110101
+    - B_THRU_DATE <= 20111231
+  actions:
+    - call_subroutine: ESCAL117
+    - command: EXIT
+---
+- rule_id: DRV-018
+  name: CY2010 Routing
+  description: Route 2010 claims to the CY2010 engine.
+  priority: 47
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20100101
+    - B_THRU_DATE <= 20101231
+  actions:
+    - call_subroutine: ESCAL100
+    - command: EXIT
+---
+- rule_id: DRV-019
+  name: CY2009 Routing
+  description: Route 2009 claims to the CY2009 engine.
+  priority: 46
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20090101
+    - B_THRU_DATE <= 20091231
+  actions:
+    - call_subroutine: ESCAL091
+    - command: EXIT
+---
+- rule_id: DRV-020
+  name: CY2008 Routing
+  description: Route 2008 claims to the CY2008 engine.
+  priority: 45
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20080101
+    - B_THRU_DATE <= 20081231
+  actions:
+    - call_subroutine: ESCAL080
+    - command: EXIT
+---
+- rule_id: DRV-021
+  name: CY2007 H2 Routing (Apr-Dec)
+  description: Route claims in 2007-04-01 through 2007-12-31 to the CY2007.1 patch engine.
+  priority: 44
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20070401
+    - B_THRU_DATE <= 20071231
+  actions:
+    - call_subroutine: ESCAL071
+    - command: EXIT
+---
+- rule_id: DRV-022
+  name: CY2007 H1 Routing (Jan-Mar)
+  description: Route claims in 2007-01-01 through 2007-03-31 to the CY2007.0 engine.
+  priority: 43
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20070101
+    - B_THRU_DATE <= 20070331
+  actions:
+    - call_subroutine: ESCAL070
+    - command: EXIT
+---
+- rule_id: DRV-023
+  name: CY2006 Routing
+  description: Route 2006 claims to the CY2006 engine.
+  priority: 42
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20060101
+    - B_THRU_DATE <= 20061231
+  actions:
+    - call_subroutine: ESCAL062
+    - command: EXIT
+---
+- rule_id: DRV-024
+  name: CY2005 Routing (Apr-Dec)
+  description: Route claims in 2005-04-01 through 2005-12-31 to the CY2005 engine.
+  priority: 41
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_THRU_DATE >= 20050401
+    - B_THRU_DATE <= 20051231
+  actions:
+    - call_subroutine: ESCAL056
     - command: EXIT

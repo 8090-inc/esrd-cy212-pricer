@@ -39,6 +39,7 @@ This baseline document acts as a repository for establishing rule taxonomy, iden
     *   Set Final Payment Amount (`PPS-FINAL-PAY-AMT`) to the Exception Rate (`P-ESRD-RATE`).
     *   Set Return Code (`PPS-RTC`) to `01`.
     *   Exit Driver logic immediately (do not call calculation subroutines).
+*   **Policy Reference:** Pub 100-02, Ch 11 §70 (ESRD PPS Transition Period / Exception Rates).
 
 #### Rule DRV-004: Pacific Island Trust Territory Exception (2011-2013)
 *   **Description:** During the PPS transition period (Jan 2011 - Dec 2013), providers in the Pacific Island Trust Territories who have an exception rate are exempt from the blended methodology and are paid their exception rate directly.
@@ -47,6 +48,7 @@ This baseline document acts as a repository for establishing rule taxonomy, iden
     *   Set Final Payment Amount (`PPS-FINAL-PAY-AMT`) to the Exception Rate (`P-ESRD-RATE`).
     *   Set Return Code (`PPS-RTC`) to `01`.
     *   Exit Driver logic immediately (do not call calculation subroutines).
+*   **Policy Reference:** Pub 100-02, Ch 11 §70 (ESRD PPS Transition Period / Exception Rates).
 
 #### Rule DRV-005: 2021.2 Calculation Routing
 *   **Description:** The system routes the claim to the calculation engine designed for Calendar Year 2021 processing.
@@ -77,6 +79,21 @@ This baseline document acts as a repository for establishing rule taxonomy, iden
 *   **Action:** 
     *   Set appropriate specific Return Code (`PPS-RTC` array of 58, 54, 55, 56, 71, 72).
     *   Halt calculation.
+*   **Policy Reference:** Pub 100-04, Ch 8 §20 (Per Treatment Payment Amount – claim data) and §20.1 (ESRD PPS adjustments list).
+
+#### Rule CAL-001A: Additional Validation Edits (Detailed)
+*   **Description:** The calculation module contains additional edit checks beyond CAL-001, each mapped to a specific rejection return code.
+*   **Condition → Action (RTC):**
+    *   Provider Type not in 40/41/05 → `52`
+    *   Special Payment Indicator not in `1` or blank → `53`
+    *   Revenue Code not in `0821/0831/0841/0851/0881` → `57`
+    *   QIP Reduction code not in `1/2/3/4` or blank → `53`
+    *   Dialysis Session Count missing/non-numeric → `73`
+    *   Line Item Date of Service missing/non-numeric → `74`
+    *   Dialysis Start Date non-numeric → `75`
+    *   Total Separately Billable Outlier amount non-numeric → `76`
+    *   Comorbid CWF return code invalid (non-AKI) → `81`
+*   **Policy Reference:** Pub 100-04, Ch 8 §20 (Per Treatment Payment Amount – claim data) and 42 CFR §413.177 (QIP reduction scale).
 
 #### Rule CAL-002: Base Wage Amount Calculation
 *   **Description:** Calculate the Adjusted PPS Base Rate using the pre-defined labor and non-labor percentages against the national Base Rate, adjusted by the local Wage Index. 
@@ -85,6 +102,7 @@ This baseline document acts as a repository for establishing rule taxonomy, iden
     *   `Labor Amount` = (`BUNDLED-BASE-PMT-RATE` * `BUN-NAT-LABOR-PCT`) * `BUN-CBSA-W-INDEX`.
     *   `Non-Labor Amount` = `BUNDLED-BASE-PMT-RATE` * `BUN-NAT-NONLABOR-PCT`.
     *   `Base Wage Amount` = `Labor Amount` + `Non-Labor Amount`.
+*   **Policy Reference:** CMS-1732-F (CY2021 ESRD PPS Final Rule – Base Rate and Wage Index updates).
 
 #### Rule CAL-003: Age Adjustment Multiplier
 *   **Description:** Determine the Age Multiplier based on the calculated patient age (current year - DOB year) and the specific dialysis mode (Hemo vs PD).
@@ -98,6 +116,7 @@ This baseline document acts as a repository for establishing rule taxonomy, iden
     *   If Age 60-69 -> Multiplier = `1.070` (CM-AGE-60-69)
     *   If Age 70-79 -> Multiplier = `1.000` (CM-AGE-70-79)
     *   If Age 80+ -> Multiplier = `1.109` (CM-AGE-80-PLUS)
+*   **Policy Reference:** Pub 100-02, Ch 11 §60 (Case-Mix Adjustments – adult and pediatric age factors).
 
 #### Rule CAL-004: BSA Factor Calculation
 *   **Description:** Calculate the patient's Body Surface Area using the traditional medical formula, then determine the adjustment factor if the patient is over 17.
@@ -106,6 +125,7 @@ This baseline document acts as a repository for establishing rule taxonomy, iden
 *   **Action:** 
     *   `BSA Factor` = `CM-BSA` (1.032) ^ ((`Calculated BSA` - `BSA-NATIONAL-AVERAGE` [1.90]) / 0.1).
     *   *(Note: If Age <= 17, `BSA Factor` = 1.000)*
+*   **Policy Reference:** Pub 100-02, Ch 11 §60 (Case-Mix Adjustments – BSA formula and factor).
 
 #### Rule CAL-005: Low BMI Adjustment
 *   **Description:** Apply a case-mix multiplier for adult patients who are significantly underweight.
@@ -114,6 +134,94 @@ This baseline document acts as a repository for establishing rule taxonomy, iden
 *   **Action:** 
     *   Set `BMI Factor` = `CM-BMI-LT-18-5` (1.017).
     *   *(Note: Otherwise, `BMI Factor` = 1.000)*
+*   **Policy Reference:** Pub 100-02, Ch 11 §60 (Case-Mix Adjustments – BMI threshold and factor).
+
+#### Rule CAL-006: AKI Claim Shortcut
+*   **Description:** Acute Kidney Injury claims bypass the full bundled factor calculation.
+*   **Condition:** If `B-COND-CODE` = `84`.
+*   **Action:**
+    *   Set `H-PPS-FINAL-PAY-AMT` = `H-BUN-BASE-WAGE-AMT`.
+    *   Set `PPS-RTC` = `02`.
+    *   Set `PPS-2011-COMORBID-PAY` = `10`.
+*   **Policy Reference:** Pub 100-04, Ch 8 §40 (AKI Claims).
+
+#### Rule CAL-007: QIP Reduction Mapping
+*   **Description:** Apply Quality Incentive Program reduction to final computed payment amounts (except AKI).
+*   **Condition & Action Mapping:**
+    *   If `P-QIP-REDUCTION` = blank → `QIP-REDUCTION` = 1.000
+    *   If `P-QIP-REDUCTION` = `1` → `QIP-REDUCTION` = 0.995
+    *   If `P-QIP-REDUCTION` = `2` → `QIP-REDUCTION` = 0.990
+    *   If `P-QIP-REDUCTION` = `3` → `QIP-REDUCTION` = 0.985
+    *   If `P-QIP-REDUCTION` = `4` → `QIP-REDUCTION` = 0.980
+*   **Policy Reference:** 42 CFR §413.177 (QIP payment reduction scale).
+
+#### Rule CAL-008: Age Calculation
+*   **Description:** Compute patient age using the bill year minus DOB year, minus one if DOB month is after bill month.
+*   **Policy Reference:** Pub 100-02, Ch 11 §60 (Case-Mix Adjustments).
+
+#### Rule CAL-009: Onset Factor
+*   **Description:** For adults, compute dialysis onset days and apply onset multiplier if ≤120 days.
+*   **Policy Reference:** Pub 100-02, Ch 11 §60 (Onset adjustment).
+
+#### Rule CAL-010/011: Comorbidity Normalization & Selection
+*   **Description:** Normalize CWF comorbidity return codes into internal comorbidity codes and select the highest multiplier, unless pediatric or onset logic suppresses comorbid payment.
+*   **Policy Reference:** Pub 100-02, Ch 11 §60 (Comorbidity adjusters).
+
+#### Rule CAL-012: Low Volume Factor
+*   **Description:** Apply low-volume multiplier for adult low-volume providers.
+*   **Policy Reference:** Pub 100-02, Ch 11 §60 (Low-volume adjustment).
+
+#### Rule CAL-013: Rural Factor
+*   **Description:** Apply rural adjustment multiplier for adult claims with CBSA < 100.
+*   **Policy Reference:** Pub 100-02, Ch 11 §60 (Rural adjustment).
+
+#### Rule CAL-014: Adjusted Base Wage Amount
+*   **Description:** Multiply all case-mix factors to derive the adjusted base wage amount.
+*   **Policy Reference:** Pub 100-02, Ch 11 §60 (Case-Mix Adjustments).
+
+#### Rule CAL-015: Training Add-On / Per-Diem
+*   **Description:** Apply training add-on for condition codes 73/87; compute per-diem for home dialysis (cond code 74 with rev 0841/0851).
+*   **Policy Reference:** Pub 100-02, Ch 11 §60 (Training and per-diem).
+
+#### Rule CAL-016: Final Payment With/Without HDPA
+*   **Description:** Compute final PPS payment amounts for per-diem or full PPS claims.
+*   **Policy Reference:** Pub 100-02, Ch 11 §60 (Payment calculation).
+
+#### Rule CAL-017: TDAPA / TPNIES Add-Ons
+*   **Description:** Compute TDAPA and TPNIES per-treatment add-ons and include them in final payment.
+*   **Policy Reference:** CMS-1732-F (CY2021 ESRD PPS Final Rule).
+
+#### Rule CAL-018: QIP Reduction Application
+*   **Description:** Apply QIP reduction to final payment amounts (non-AKI).
+*   **Policy Reference:** 42 CFR §413.177.
+
+#### Rule CAL-019: Network Reduction
+*   **Description:** Subtract $0.50 for full PPS or $0.21 for per-diem claims.
+*   **Policy Reference:** Pub 100-04, Ch 8 §110.
+
+#### Rule CAL-020: HDPA Selection (ETC)
+*   **Description:** Use HDPA-adjusted PPS amount when ETC indicator is set; otherwise use standard PPS amount.
+*   **Policy Reference:** ETC Final Rule (§512.300–§512.350).
+
+#### Rule CAL-021: Outlier Calculation
+*   **Description:** Compute outlier MAP, compare to imputed MAP, and calculate outlier payment.
+*   **Policy Reference:** CMS-1732-F (Outlier policy updates) and Pub 100-02 Ch 11 §60.
+
+#### Rule CAL-022: Return Code Resolution Matrix
+*   **Description:** Assign final PPS-RTC based on combinations of outlier, comorbidity, onset, low-volume, training, pediatric, and low BMI flags.
+*   **Policy Reference:** RTCCPY (internal return-code definitions).
+
+#### Rule CAL-023: Low Volume Recovery Payments
+*   **Description:** Compute low-volume recovery adjustments to PPS and outlier components.
+*   **Policy Reference:** Pub 100-02, Ch 11 §60.
+
+---
+
+## 6. Policy Traceability
+Full policy-to-rule mapping: `docs/policy_traceability.md`.
+
+## 7. Policy Gaps & Mismatches
+Discrepancy log: `docs/policy_gap_log.md`.
 
 ---
 
@@ -166,9 +274,24 @@ The system utilizes several pre-defined reference tables, either as hardcoded ar
 While `ESCAL212` represents the modern baseline of the calculation pricing rules, the source codebase includes 20 specific legacy legacy execution modules (`ESCAL056` through `ESCAL202`) intended to price retrospective claims precisely based on the static data applicable during those years.
 
 ### Rule HIST-001: Historical Versioning & Routing
-The controller (`ESDRV212`) selects the appropriate execution engine by directly mapping the Calendar Year of the Bill Date to a particular static module. The executed rules remain structurally identical to the logic documented for `ESCAL212`, except they substitute historically locked hardcoded values for variables such as Base Rates, low-volume thresholds, or distinct Age Multipliers mapping to those specific years. 
-*   **<= 2005**: Calls `ESCAL056`
-*   **2006 -> 2009**: Calls `ESCAL062`, `070`, `071`(patch), `080`, `091` respectively.
-*   **2010 -> 2013**: Calls `ESCAL100`, `117`, `122`, `130` respectively. 
-*   **2014 -> 2018**: Calls `ESCAL140`, `151`, `160`, `170`, `171`(patch), `180` respectively.
-*   **2019 -> 2021**: Calls `ESCAL191`, `200`, `202`(patch) and `212` respectively.
+The controller (`ESDRV212`) selects the appropriate execution engine by directly mapping the Bill Thru Date to a particular static module. The executed rules remain structurally identical to the logic documented for `ESCAL212`, except they substitute historically locked hardcoded values for variables such as Base Rates, low-volume thresholds, or distinct Age Multipliers mapping to those specific years.
+*   **2005-04-01 -> 2005-12-31**: Calls `ESCAL056`
+*   **2006-01-01 -> 2006-12-31**: Calls `ESCAL062`
+*   **2007-01-01 -> 2007-03-31**: Calls `ESCAL070`
+*   **2007-04-01 -> 2007-12-31**: Calls `ESCAL071` (patch)
+*   **2008-01-01 -> 2008-12-31**: Calls `ESCAL080`
+*   **2009-01-01 -> 2009-12-31**: Calls `ESCAL091`
+*   **2010-01-01 -> 2010-12-31**: Calls `ESCAL100`
+*   **2011-01-01 -> 2011-12-31**: Calls `ESCAL117`
+*   **2012-01-01 -> 2012-12-31**: Calls `ESCAL122`
+*   **2013-01-01 -> 2013-12-31**: Calls `ESCAL130`
+*   **2014-01-01 -> 2014-12-31**: Calls `ESCAL140`
+*   **2015-01-01 -> 2015-12-31**: Calls `ESCAL151`
+*   **2016-01-01 -> 2016-12-31**: Calls `ESCAL160`
+*   **2017-01-01 -> 2017-06-30**: Calls `ESCAL170`
+*   **2017-07-01 -> 2017-12-31**: Calls `ESCAL171` (patch)
+*   **2018-01-01 -> 2018-12-31**: Calls `ESCAL180`
+*   **2019-01-01 -> 2019-12-31**: Calls `ESCAL191`
+*   **2020-01-01 -> 2020-06-30**: Calls `ESCAL200`
+*   **2020-07-01 -> 2020-12-31**: Calls `ESCAL202` (patch)
+*   **2021-01-01 -> 2021-12-31**: Calls `ESCAL212`

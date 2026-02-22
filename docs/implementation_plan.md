@@ -20,11 +20,11 @@ Reverse engineer the ESRD CY21.2 Mainframe Pricer COBOL codebase to create four 
 
 ### 2. Machine-Readable Rule Artifacts
 - **Goal:** Model and export rules in a human-editable Domain Specific Language (DSL) with test harnesses and tooling.
-- **V1 Focus:** Establish the YAML-based DSL format and tooling baseline.
+- **V1 Focus:** Establish the Gherkin-based DSL format and tooling baseline.
 - **Format & Tooling:**
-  - **DSL:** YAML Rule Definition (`.yaml`). YAML is widely considered the most human-readable and easily editable data serialization standard, making it perfect for Business Analysts (SMEs) to read and modify without needing to learn programming syntax like Java/Drools.
-  - **Artifacts:** `.yaml` files containing the extracted rules for V1.
-  - **Test Harness:** A python script (`rule_validator.py`) using `PyYAML` to parse the YAML DSL files and validate basic structural syntax, ensuring the rules maintain valid compilation states.
+  - **DSL:** Gherkin (`.feature`). Gherkin is readable by business and technical SMEs, and supports narrative rules without mirroring COBOL control flow.
+  - **Artifacts:** `.feature` files containing the extracted rules for V1.
+  - **Test Harness (Planned):** A parser/validator to enforce Gherkin structure, rule IDs, and traceability metadata.
   - **Discovery Environment:** Utilizing the local file system and Python to ensure repeatable reruns.
 
 ### 3. System Architecture Documentation
@@ -51,7 +51,7 @@ Reverse engineer the ESRD CY21.2 Mainframe Pricer COBOL codebase to create four 
 ### V2: Expanded Slice
 - **Scope:** Complete analysis of the remainder of `ESCAL212` (Core Calculations like Outlier, Age Factors, BMI, QIP).
 - Expand the 4 deliverables using the V1 baselines.
-- Update test harnesses and run regression validations against the growing YAML DSL rule set.
+- Update test harnesses and run regression validations against the growing Gherkin rule set.
 
 ### V3: Complete Set (Every File Synthesized)
 - **Scope:** Complete analysis and synthesis of rules from *every single file* remaining in the file system. This sweeping effort includes:
@@ -62,4 +62,4 @@ Reverse engineer the ESRD CY21.2 Mainframe Pricer COBOL codebase to create four 
 - **Verification:** Comprehensive acceptance testing executing the python test harness against all gathered rules.
 
 ## User Review Required
-- Please review the transition to using YAML (`.yaml`) as the Human-Editable DSL format, which generally offers superior readability for non-programmers compared to Drools.
+- Please review the transition to using Gherkin (`.feature`) as the sole Human-Editable DSL format.

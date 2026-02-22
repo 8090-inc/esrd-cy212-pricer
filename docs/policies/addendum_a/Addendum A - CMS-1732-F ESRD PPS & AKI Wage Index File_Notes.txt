@@ -1,0 +1,5 @@
+	Note												
+													
+CBSA 25980	"At this time, there are no hospitals located in this urban area on which to base a wage index. "												
+"Delaware, New Jersey, and Rhode Island"	All counties within the State are classified as urban.												
+CY 2021 Wage Data/ 2018 OMB Delineations - Wage Index	"The actual wage index for an individual ESRD facility may be higher for CY 2021, as determined by the 5% limit on any decreases in an ESRD facility's wage index from the prior year (CY2020)."												

@@ -4,6 +4,8 @@
   name: Historical Calculation Routing Execution
   description: The pricer dynamically executes a specific calculation subroutine corresponding to the bill date. The legacy modules (ESCAL056 through ESCAL202) implement identical core algorithmic sequences as ESCAL212, but utilize historical hardcoded scalars (e.g. legacy age multipliers, legacy base rates).
   priority: 100
+  policy_refs:
+    - "Annual ESRD PPS Final Rules (CY2005–CY2020) – historical base rates and adjusters"
   conditions:
     - field: claim.billing_date_year
       operator: exists
@@ -12,43 +14,43 @@
         strategy_name: Calculation Engine Versioning
         description: Execute the module corresponding to the bill date.
         mappings:
-          - date_range: "<= 2005"
+          - date_range: "2005-04-01..2005-12-31"
             module: "ESCAL056"
-          - date_range: "2006"
+          - date_range: "2006-01-01..2006-12-31"
             module: "ESCAL062"
-          - date_range: "2007"
+          - date_range: "2007-01-01..2007-03-31"
             module: "ESCAL070"
-          - date_range: "2007"
+          - date_range: "2007-04-01..2007-12-31"
             module: "ESCAL071" # Minor version patch
-          - date_range: "2008"
+          - date_range: "2008-01-01..2008-12-31"
             module: "ESCAL080"
-          - date_range: "2009"
+          - date_range: "2009-01-01..2009-12-31"
             module: "ESCAL091"
-          - date_range: "2010"
+          - date_range: "2010-01-01..2010-12-31"
             module: "ESCAL100"
-          - date_range: "2011"
+          - date_range: "2011-01-01..2011-12-31"
             module: "ESCAL117"
-          - date_range: "2012"
+          - date_range: "2012-01-01..2012-12-31"
             module: "ESCAL122"
-          - date_range: "2013"
+          - date_range: "2013-01-01..2013-12-31"
             module: "ESCAL130"
-          - date_range: "2014"
+          - date_range: "2014-01-01..2014-12-31"
             module: "ESCAL140"
-          - date_range: "2015"
+          - date_range: "2015-01-01..2015-12-31"
             module: "ESCAL151"
-          - date_range: "2016"
+          - date_range: "2016-01-01..2016-12-31"
             module: "ESCAL160"
-          - date_range: "2017"
+          - date_range: "2017-01-01..2017-06-30"
             module: "ESCAL170"
-          - date_range: "2017"
+          - date_range: "2017-07-01..2017-12-31"
             module: "ESCAL171" # Minor version patch
-          - date_range: "2018"
+          - date_range: "2018-01-01..2018-12-31"
             module: "ESCAL180"
-          - date_range: "2019"
+          - date_range: "2019-01-01..2019-12-31"
             module: "ESCAL191"
-          - date_range: "2020"
+          - date_range: "2020-01-01..2020-06-30"
             module: "ESCAL200"
-          - date_range: "2020"
+          - date_range: "2020-07-01..2020-12-31"
             module: "ESCAL202" # Minor version patch
-          - date_range: "2021"
+          - date_range: "2021-01-01..2021-12-31"
             module: "ESCAL212" # Baseline modeled logic module

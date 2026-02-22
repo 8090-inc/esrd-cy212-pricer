@@ -4,6 +4,8 @@
   name: Geographic Wage Index Adjustment Lookup
   description: The system uses geographic data to lookup the specific location-based wage index for adjusting the labor portion of the ESRD base rate.
   priority: 100
+  policy_refs:
+    - "CMS-1732-F (CY2021 ESRD PPS Final Rule – wage index policy)"
   conditions:
     - field: provider.cbsa_code
       operator: exists
@@ -24,10 +26,65 @@
           variable: BUN_CBSA_W_INDEX
           fallback: "Throw RTC Code 60/61"
 ---
+- rule_id: REF-WAGE-002
+  name: Special Payment Wage Index Override
+  description: If special payment indicator is set, use the provided special wage index directly.
+  priority: 95
+  policy_refs:
+    - "Internal pricer override (no published policy reference in repo)"
+  conditions:
+    - P_SPEC_PYMT_IND == "1"
+  actions:
+    - map:
+        variable: BUN_CBSA_W_INDEX
+        from: P_SPEC_WAGE_INDX
+---
+- rule_id: REF-WAGE-003
+  name: Children’s Hospital Wage Index Override (CY2015)
+  description: For specific children’s hospitals in CY2015, override CBSA wage index with special values.
+  priority: 94
+  policy_refs:
+    - "Internal pricer exception (no published policy reference in repo)"
+  conditions:
+    - B_THRU_DATE >= 20150101
+    - B_THRU_DATE <= 20151231
+    - P_PROV_OSCAR IN ["093300", "263302", "393303", "393307", "403301", "453300"]
+  actions:
+    - define_lookup:
+        table_sources:
+          - ESCHI151
+        keys:
+          - provider.oscar_number
+        output:
+          variable: BUN_CBSA_W_INDEX
+---
+- rule_id: REF-WAGE-004
+  name: Supplemental Wage Index Cap (5% Decrease)
+  description: Apply the supplemental wage index cap to limit decreases to 5% after 2020-09-30.
+  priority: 93
+  policy_refs:
+    - "CMS-1732-F (CY2021 ESRD PPS Final Rule – wage index transition)"
+  conditions:
+    - B_THRU_DATE > 20200930
+    - P_SUPP_WI_IND == "1"
+    - P_SUPP_WI > 0
+  actions:
+    - calculate:
+        variable: ESRD_SUPP_WI_RATIO
+        formula: (BUN_CBSA_W_INDEX - P_SUPP_WI) / P_SUPP_WI
+    - conditional:
+        if: ESRD_SUPP_WI_RATIO < -0.05
+        then:
+          - calculate:
+              variable: BUN_CBSA_W_INDEX
+              formula: P_SUPP_WI * 0.95
+---
 - rule_id: REF-BASE-001
   name: Base Rate Lookup
   description: The system looks up the National Base Payment Rate for the specific Calendar Year that the claim was processed in.
   priority: 100
+  policy_refs:
+    - "CMS-1732-F (CY2021 ESRD PPS Final Rule – base rate update)"
   conditions:
     - field: claim.billing_date
       operator: exists
@@ -44,6 +101,8 @@
   name: Special Childrens Hospital Wage Index
   description: There are 6 specific Children's Hospitals that have an explicit, hardcoded special wage index that overrides standard CBSA lookups.
   priority: 100
+  policy_refs:
+    - "Internal pricer exception (no published policy reference in repo)"
   conditions:
     - field: provider.oscar_number
       operator: in

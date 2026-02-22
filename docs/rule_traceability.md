@@ -10,11 +10,20 @@ This matrix maps the human and machine-readable business rules back to their exa
 | DRV-003 | `ESDRV212` | 420-424 | Honor Exception Rate for pre-2011 claims directly, without calling PPS calculation logic. | Payment_Override | Pending V1 Baseline |
 | DRV-004 | `ESDRV212` | 426-433 | Honor Exception Rate for Pacific Island Trust Territories during the 2011-2013 transition period without calculating PPS blend. | Payment_Override | Pending V1 Baseline |
 | DRV-005 | `ESDRV212` | 520-528 | Route 2021 claims to the CY2021 calculation engine. | Routing | Pending V1 Baseline | 
+| DRV-006..024 | `ESDRV212` | 536-815 | Date-based routing for 2005-2020 (incl. mid-year patches in 2007/2017/2020) to the correct historical calculation module. | Routing | Pending V1 Baseline |
+| DRV-025 | `ESDRV212` | 466-511 | Wage index lookup path selection by bill date; sets RTC on missing MSA/CBSA tables. | Reference Data | Pending V1 Baseline |
 | CAL-001 | `ESCAL212` | 795-884 | Reject claims missing specific condition codes or with missing/invalid Date of Birth, Weight, Height, or Dialysis Session Counts. | Validation | Pending V2 Baseline |
+| CAL-001A..M | `ESCAL212` | 795-922 | Additional validation edits (provider type, special payment indicator, revenue code, QIP code, line item dates, outlier totals, comorbid return code). | Validation | Pending V2 Baseline |
 | CAL-002 | `ESCAL212` | 937-945 | Calculate the Adjusted PPS Base Rate using the pre-defined labor and non-labor percentages against the national Base Rate. | Calculation | Pending V2 Baseline |
 | CAL-003 | `ESCAL212` | 1076-1112 | Determine the Age Multiplier based on the calculated patient age (current year - DOB year) and the specific dialysis mode (Hemo vs PD). | Calculation | Pending V2 Baseline |
 | CAL-004 | `ESCAL212` | 1117-1126 | Calculate the patient's Body Surface Area using the traditional medical formula, then determine the adjustment factor. | Calculation | Pending V2 Baseline |
 | CAL-005 | `ESCAL212` | 1131-1139 | Apply a case-mix multiplier for adult patients who are significantly underweight. | Calculation | Pending V2 Baseline |
+| CAL-006 | `ESCAL212` | 777-786 | AKI claims (cond code 84) bypass bundled factors; paid at base wage amount. | Calculation | Pending V2 Baseline |
+| CAL-007 | `ESCAL212` | 959-976 | QIP reduction mapping (blank/1/2/3/4 → 1.000/0.995/0.990/0.985/0.980). | Calculation | Pending V2 Baseline |
+| CAL-008..014 | `ESCAL212` | 949-1250 | Age/onset/comorbid/low-volume/rural factors and adjusted base wage calculation. | Calculation | Pending V2 Baseline |
+| CAL-015..020 | `ESCAL212` | 1250-2185 | Training/per-diem logic, TDAPA/TPNIES, QIP application, network reduction, HDPA selection. | Calculation | Pending V2 Baseline |
+| CAL-021 | `ESCAL212` | 1452-1679 | Outlier factors and payment calculation (MAP, FDL, loss-sharing). | Calculation | Pending V2 Baseline |
+| CAL-023 | `ESCAL212` | 1748-1866 | Low-volume recovery payments for PPS and outlier. | Calculation | Pending V2 Baseline |
 | CPY-RTC-001/002 | `RTCCPY` | 1-80 | Map integer codes (00-99) passing between caller and module to their semantic business logic outcome (Paid, Adjustments, Rejection Reasons). | Reference Data | Pending V3 Baseline |
 | CPY-BILL-001 | `BILLCPY` | 1-260 | The rigid data contract interface defining input structures like condition codes and date strings passed from FISS. | Reference Data | Pending V3 Baseline |
 | REF-WAGE-001/BASE-001| `BASECBSA`,`BASERATE`,`BUNDCBSA`,`ESCOM151`,`ESBUN210`,`ESWRT151` | All | Lookup tables for Base Rates and Geographic Multipliers by Calendar Year. | Reference Data | Pending V3 Baseline |
@@ -42,3 +51,11 @@ Given the volume of rules, a stratified sampling approach will be taken during e
 
 ### 2.3 Documentation Export
 Upon Baseline Approval, the JSON files act as the Vendor-Neutral, machine-readable format. The Python tools can easily parse this single source of truth into Drools, YAML, or any target database structure required by future systems without needing to reinterpret the original COBOL source logic.
+
+---
+
+## 3. Policy Traceability
+See `docs/policy_traceability.md` for the policy-to-rule mapping, and `docs/policy_gap_log.md` for documented mismatches and coverage gaps.
+
+## 4. Dependency Structure
+Execution and calculation dependencies are summarized in `docs/dependency_structure.md`.

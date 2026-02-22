@@ -4,46 +4,88 @@
   name: Return Code Mappings (Valid Payment)
   description: Maps internal PPS-RTC codes (00-49) to their business meaning (types of adjustments applied).
   priority: 100
+  policy_refs:
+    - "RTCCPY (Internal pricer return-code definitions)"
   conditions: []
   actions:
     - define_map:
         variable: PPS_RTC_PAYMENT_CODES
         mapping:
+          "00": "ESRD PPS Payment calculated (legacy 2005-2010)"
+          "01": "ESRD facility rate > ZERO (driver override)"
           "02": "No adjustments"
           "03": "With Outlier"
           "04": "With Acute Comorbid"
           "05": "With Chronic Comorbid"
+          "06": "With Acute Comorbid, Outlier"
+          "07": "With Chronic Comorbid, Outlier"
           "08": "With Onset"
+          "09": "With Onset, Outlier"
           "10": "With Low Volume"
           "11": "With Training"
+          "12": "With Low Volume, Training"
+          "13": "With Multiple Adjustments (reserved)"
           "14": "With Pediatric"
+          "15": "With Pediatric, Training"
+          "16": "With Pediatric, Outlier"
+          "17": "With Pediatric, Outlier, Training"
+          "18": "With Acute Comorbid, Outlier, Low Volume"
+          "19": "With Acute Comorbid, Outlier, Low Volume, Training"
+          "20": "With Acute Comorbid, Low Volume"
+          "21": "With Acute Comorbid, Low Volume, Training"
+          "22": "With Acute Comorbid, Training"
+          "23": "With Chronic Comorbid, Outlier, Low Volume"
+          "24": "With Chronic Comorbid, Outlier, Low Volume, Training"
+          "25": "With Chronic Comorbid, Low Volume"
+          "26": "With Chronic Comorbid, Low Volume, Training"
+          "27": "With Chronic Comorbid, Training"
+          "28": "With Outlier, Low Volume"
+          "29": "With Outlier, Low Volume, Training"
+          "30": "With Onset, Outlier, Low Volume"
           "31": "With Low BMI"
+          "32": "With Low Volume, Onset"
+          "33": "With Outlier, Training"
+          "34": "With Outlier, Training, Chronic Comorbid"
+          "35": "With Outlier, Training, Acute Comorbid"
 ---
 - rule_id: CPY-RTC-002
   name: Return Code Mappings (Rejection)
   description: Maps internal PPS-RTC codes (50-99) to the specific reason the bill was rejected.
   priority: 100
+  policy_refs:
+    - "RTCCPY (Internal pricer return-code definitions)"
   conditions: []
   actions:
     - define_map:
         variable: PPS_RTC_REJECT_CODES
         mapping:
-          "52": "Provider type NOT = '40' OR '41'"
-          "53": "Special payment indicator NOT = '1' OR blank"
+          "50": "ESRD facility rate not numeric (driver)"
+          "52": "Provider type NOT IN {'40','41','05'}"
+          "53": "Special payment indicator OR QIP reduction invalid"
           "54": "Date of Birth NOT numeric OR = ZERO"
           "55": "Patient Weight NOT numeric OR = ZERO"
           "56": "Patient Height NOT numeric OR = ZERO"
+          "57": "Revenue Center Code NOT in range"
           "58": "Condition Code NOT IN {'  ','73','74','84','87'}"
           "60": "CBSA wage adjusted rate record not found (Mainframe)"
           "61": "CBSA wage index rate record not found (PC)"
+          "62": "CBSA invalid for calendar year (PC)"
           "71": "Exceeds Maximum Height allowance"
           "72": "Exceeds Maximum Weight allowance"
+          "73": "Claim Num Dialysis Sessions NOT numeric OR = ZERO"
+          "74": "Line Item Service Date NOT numeric OR = ZERO"
+          "75": "Dialysis Start Date NOT numeric"
+          "76": "Total Outlier Payment NOT numeric"
+          "81": "Comorbid CWF Return Code NOT valid"
           "98": "Claim through date before 04/01/05 or not numeric"
+          "99": "Internal pricer error (logic/return code integrity)"
 ---
 - rule_id: CPY-BILL-001
   name: Core Billing Input Fields
   description: Defines the required payload structure parsed from the FISS caller into the BILL-NEW-DATA copybook.
   priority: 100
+  policy_refs:
+    - "Pub 100-04 Ch 8 §20 (Per Treatment Payment Amount – claim data)"
   conditions: []
   actions:
     - define_schema:

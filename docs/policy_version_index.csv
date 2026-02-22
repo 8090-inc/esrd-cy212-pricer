@@ -1,0 +1,18 @@
+policy_id,title,effective_date,transmittal_id,release_id,source,notes
+PUB100-04-CH8,Medicare Claims Processing Manual Ch 8,,, ,CMS Manual,
+PUB100-02-CH11,Medicare Benefit Policy Manual Ch 11,,, ,CMS Manual,
+CFR-42-413-177,42 CFR 413.177 ESRD QIP Payment Reduction,,,,eCFR (law.cornell.edu),QIP payment reduction up to 2% in 0.5% increments.
+CFR-42-512-340,42 CFR 512.340 Facility HDPA applicability,,,,eCFR (law.cornell.edu),Facility HDPA applies to 072X claims with condition codes 74/76 for ETC participants.
+CFR-42-512-350,42 CFR 512.350 HDPA schedule,,,,eCFR (law.cornell.edu),"HDPA schedule: 2021 +3%, 2022 +2%, 2023 +1%."
+CMS-1732-F,CY2021 ESRD PPS Final Rule Fact Sheet,,, ,CMS Fact Sheet,
+FR-2020-24485,"CY 2021 ESRD PPS Final Rule (85 FR 71398, CMS-1732-F)",2021-01-01,CMS-1732-F,85 FR 71398,Federal Register (govinfo.gov),"Labor-related share 52.3%, wage index application, 5% cap on decreases for CY2021."
+PUB100-04-CH8-REV10640,"Medicare Claims Processing Manual, Ch 8 (Rev. 10640)",2021-09-07,Rev 10640,Issued 2021-08-06,CMS Manual (clm104c08.pdf),"Pediatric model, QIP reduction codes, network reduction."
+PUB100-04-CH8-REV12517,"Medicare Claims Processing Manual, Ch 8 (Rev. 12517)",2024-03-25,Rev 12517,Issued 2024-02-22,CMS Manual (clm104c08.pdf),AKI billing and adjustment exclusions.
+PUB100-02-CH11-REV171,"Medicare Benefit Policy Manual, Ch 11 (Transmittal 171)",2011-01-01,Transmittal 171,Issued 2013-06-07,CMS Manual (r171bp.pdf),Adult case-mix adjusters incl. BMI <18.5 and onset 120 days.
+CMS-ESRD-PLA,CMS ESRD PPS Patient-Level Adjustments,,,Last modified 2024-09-10,CMS website,"Comorbidity highest single adjustment, onset 120 days, pediatric adjustments, adult age categories."
+CLM104C08-REV10640,Medicare Claims Processing Manual Ch 8 (Rev. 10640),2021-09-07,Rev 10640,Issued 2021-08-06,CMS Manual (clm104c08.pdf),"ESRD PPS calc, pediatric model, QIP codes, condition codes, network reduction."
+CLM104C08-REV12979,Medicare Claims Processing Manual Ch 8 (Rev. 12979),2025-01-01,Rev 12979,Issued 2024-11-22,CMS Manual (clm104c08.pdf),AKI claim rules and training add-on update.
+BP102C11-REV257,Medicare Benefit Policy Manual Ch 11 (Rev. 257),2019-03-01,Rev 257,Issued 2019-03-01,CMS Manual (bp102c11.pdf),"ESRD PPS case-mix adjustments, BMI/BSA formulas, onset, comorbidity, outlier calc."
+CMS-ESRDPAYMENT,CMS ESRD PPS Overview Page,,,Last modified 2026-02-10,CMS website,"Facility-level adjustments (low-volume, wage index, rural) and training add-on description."
+CMS-ESRD-OUTLIER,CMS ESRD PPS Outlier Services,,,Last modified 2025-12-31,CMS website,Outlier policy summary and TDAPA/TPNIES not outlier until period ends.
+CMS-1732-F-ADD-A,Addendum A - CMS-1732-F ESRD PPS & AKI Wage Index File,2021-01-01,,CMS-1732-F Addendum A,CMS-1732-F downloads page,Official wage index file for CY2021 ESRD PPS & AKI. Contains wage index values and any special provider overrides.

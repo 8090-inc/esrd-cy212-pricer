@@ -1,21 +1,261 @@
 # ESRD Pricing Rules: CY2021 CALCULATION ENGINE (ESCAL212)
 ---
-- rule_id: CAL-001
+- rule_id: CAL-000
+  name: Condition Code Validation
+  description: Reject claims with invalid condition codes.
+  priority: 110
+  policy_refs:
+    - "Pub 100-04 Ch 8 §20 (Per Treatment Payment Amount – claim data)"
+    - "Pub 100-04 Ch 8 §20.1 (ESRD PPS adjustments list)"
+    - "Pub 100-04 Ch 8 §50.3 (Condition codes list for ESRD claims)"
+  conditions:
+    - B_COND_CODE NOT IN ["73", "74", "84", "87", "  "]
+  actions:
+    - set:
+        variable: PPS_RTC
+        value: 58
+    - command: EXIT
+---
+- rule_id: CAL-001A
+  name: Provider Type Validation
+  description: Reject claims where provider type is not 40, 41, or 05.
+  priority: 109
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - P_PROV_TYPE NOT IN ["40", "41", "05"]
+  actions:
+    - set:
+        variable: PPS_RTC
+        value: 52
+    - command: EXIT
+---
+- rule_id: CAL-001B
+  name: Special Payment Indicator Validation
+  description: Reject claims where special payment indicator is not '1' or blank.
+  priority: 108
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - P_SPEC_PYMT_IND NOT IN ["1", " "]
+  actions:
+    - set:
+        variable: PPS_RTC
+        value: 53
+    - command: EXIT
+---
+- rule_id: CAL-001C
+  name: Revenue Code Validation
+  description: Reject claims where revenue code is not an allowed ESRD code.
+  priority: 104
+  policy_refs:
+    - "Pub 100-04 Ch 8 §20 (Per Treatment Payment Amount – claim data)"
+  conditions:
+    - B_REV_CODE NOT IN ["0821", "0831", "0841", "0851", "0881"]
+  actions:
+    - set:
+        variable: PPS_RTC
+        value: 57
+    - command: EXIT
+---
+- rule_id: CAL-001D
+  name: QIP Reduction Code Validation
+  description: Reject claims where QIP reduction code is not 1-4 or blank.
+  priority: 103
+  policy_refs:
+    - "42 CFR 413.177 (QIP payment reduction scale)"
+    - "Pub 100-04 Ch 8 §20.3 (QIP Reduction)"
+  conditions:
+    - P_QIP_REDUCTION NOT IN ["1", "2", "3", "4", " "]
+  actions:
+    - set:
+        variable: PPS_RTC
+        value: 53
+    - command: EXIT
+---
+- rule_id: CAL-001E
+  name: Weight Validation (Non-AKI)
+  description: Reject non-AKI claims with missing or non-numeric weight.
+  priority: 106
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_COND_CODE != "84"
+    - B_PATIENT_WGT == 0 OR B_PATIENT_WGT is NOT NUMERIC
+  actions:
+    - set:
+        variable: PPS_RTC
+        value: 55
+    - command: EXIT
+---
+- rule_id: CAL-001F
+  name: Height Validation (Non-AKI)
+  description: Reject non-AKI claims with missing or non-numeric height.
+  priority: 105
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_COND_CODE != "84"
+    - B_PATIENT_HGT == 0 OR B_PATIENT_HGT is NOT NUMERIC
+  actions:
+    - set:
+        variable: PPS_RTC
+        value: 56
+    - command: EXIT
+---
+- rule_id: CAL-001G
+  name: Height Upper Bound (Non-AKI)
+  description: Reject non-AKI claims with height over 300.
+  priority: 102
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_COND_CODE != "84"
+    - B_PATIENT_HGT > 300.00
+  actions:
+    - set:
+        variable: PPS_RTC
+        value: 71
+    - command: EXIT
+---
+- rule_id: CAL-001H
+  name: Weight Upper Bound (Non-AKI)
+  description: Reject non-AKI claims with weight over 500.
+  priority: 101
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_COND_CODE != "84"
+    - B_PATIENT_WGT > 500.00
+  actions:
+    - set:
+        variable: PPS_RTC
+        value: 72
+    - command: EXIT
+---
+- rule_id: CAL-001I
+  name: Dialysis Session Count Validation
+  description: Reject claims with missing or non-numeric dialysis session counts.
+  priority: 100
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions:
+    - B_CLAIM_NUM_DIALYSIS_SESSIONS == 0 OR B_CLAIM_NUM_DIALYSIS_SESSIONS is NOT NUMERIC
+  actions:
+    - set:
+        variable: PPS_RTC
+        value: 73
+    - command: EXIT
+---
+- rule_id: CAL-001J
+  name: Line Item Date of Service Validation
+  description: Reject claims with missing or non-numeric line item date of service.
+  priority: 99
+  policy_refs:
+    - "Pub 100-04 Ch 8 §20 (Claim data table; line item dates for dialysis revenue codes)"
+  conditions:
+    - B_LINE_ITEM_DATE_SERVICE == 0 OR B_LINE_ITEM_DATE_SERVICE is NOT NUMERIC
+  actions:
+    - set:
+        variable: PPS_RTC
+        value: 74
+    - command: EXIT
+---
+- rule_id: CAL-001K
+  name: Dialysis Start Date Validation
+  description: Reject claims with non-numeric dialysis start dates.
+  priority: 98
+  policy_refs:
+    - "Pub 100-04 Ch 8 §20 (Dialysis start date required for onset adjustment)"
+  conditions:
+    - B_DIALYSIS_START_DATE is NOT NUMERIC
+  actions:
+    - set:
+        variable: PPS_RTC
+        value: 75
+    - command: EXIT
+---
+- rule_id: CAL-001L
+  name: Outlier Total Charge Validation
+  description: Reject claims with non-numeric outlier total charges.
+  priority: 97
+  policy_refs:
+    - "Pub 100-04 Ch 8 §20 (Payer-only value code 79 for outlier calculation)"
+  conditions:
+    - B_TOT_PRICE_SB_OUTLIER is NOT NUMERIC
+  actions:
+    - set:
+        variable: PPS_RTC
+        value: 76
+    - command: EXIT
+---
+- rule_id: CAL-001M
+  name: Comorbid CWF Return Code Validation
+  description: Reject non-AKI claims with invalid CWF comorbid return codes.
+  priority: 96
+  policy_refs:
+    - "Pub 100-04 Ch 8 §20 (Payer-only condition codes MA–MF for comorbidity)"
+  conditions:
+    - B_COND_CODE != "84"
+    - COMORBID_CWF_RETURN_CODE NOT IN [" ", "10", "20", "40", "50", "60"]
+  actions:
+    - set:
+        variable: PPS_RTC
+        value: 81
+    - command: EXIT
+---
+- rule_id: CAL-001N
   name: Date of Birth Validation
   description: Reject claims where DOB is missing or invalid.
-  priority: 100
+  priority: 107
+  policy_refs:
+    - "Pub 100-04 Ch 8 §20 (Claim data table; DOB required)"
   conditions:
     - B_DOB_DATE == 0 OR B_DOB_DATE is NOT NUMERIC
   actions:
-    - set: 
+    - set:
         variable: PPS_RTC
         value: 54
+    - command: EXIT
+---
+- rule_id: CAL-001O
+  name: Force Waive Blend Indicator
+  description: Override incoming blend indicator to force full PPS processing.
+  priority: 50
+  policy_refs:
+    - "Internal/No policy citation found"
+  conditions: []
+  actions:
+    - set:
+        variable: P_PROV_WAIVE_BLEND_PAY_INDIC
+        value: "Y"
+---
+- rule_id: CAL-001P
+  name: AKI Claim Shortcut
+  description: For AKI condition code 84, pay the base wage amount directly without full factor calculation.
+  priority: 49
+  policy_refs:
+    - "Pub 100-04 Ch 8 §40 (AKI Claims)"
+  conditions:
+    - B_COND_CODE == "84"
+  actions:
+    - map:
+        variable: H_PPS_FINAL_PAY_AMT
+        from: H_BUN_BASE_WAGE_AMT
+    - set:
+        variable: PPS_RTC
+        value: "02"
+    - set:
+        variable: PPS_2011_COMORBID_PAY
+        value: "10"
     - command: EXIT
 ---
 - rule_id: CAL-002
   name: Base Wage Amount Initialization
   description: Calculate the unadjusted base wage amount using labor and non-labor national averages.
   priority: 90
+  policy_refs:
+    - "CMS-1732-F (CY2021 ESRD PPS Final Rule – Base Rate & Wage Index)"
   conditions: []
   actions:
     - calculate:
@@ -32,6 +272,8 @@
   name: Age Adjustment Factor (Pediatric Hemo)
   description: Set the age multiplier for pediatric hemodialysis patients.
   priority: 80
+  policy_refs:
+    - "Pub 100-02 Ch 11 §60 (Case-Mix Adjustments – pediatric factors)"
   conditions:
     - H_PATIENT_AGE < 13
     - B_REV_CODE IN ["0821", "0881"]
@@ -44,6 +286,8 @@
   name: Age Adjustment Factor (Adult 18-44)
   description: Set the age multiplier for adult patients between 18 and 44.
   priority: 80
+  policy_refs:
+    - "Pub 100-02 Ch 11 §60 (Case-Mix Adjustments – adult factors)"
   conditions:
     - H_PATIENT_AGE >= 18
     - H_PATIENT_AGE <= 44
@@ -56,6 +300,8 @@
   name: BSA Calculation and Adjustment
   description: Calculate BSA and set the adjustment factor for adult patients.
   priority: 70
+  policy_refs:
+    - "Pub 100-02 Ch 11 §60 (Case-Mix Adjustments – BSA formula)"
   conditions:
     - H_PATIENT_AGE > 17
   actions:
@@ -66,10 +312,25 @@
         variable: H_BUN_BSA_FACTOR
         formula: 1.032 ^ ((H_BUN_BSA - 1.90) / 0.1)
 ---
+- rule_id: CAL-004B
+  name: BSA Factor Default (Pediatric)
+  description: Set BSA factor to 1.000 for patients age 17 or younger.
+  priority: 69
+  policy_refs:
+    - "Pub 100-02 Ch 11 §60 (Case-Mix Adjustments – BSA factor)"
+  conditions:
+    - H_PATIENT_AGE <= 17
+  actions:
+    - set:
+        variable: H_BUN_BSA_FACTOR
+        value: 1.000
+---
 - rule_id: CAL-005
   name: Low BMI Adjustment
   description: Apply adjustments for low BMI in adult patients.
   priority: 60
+  policy_refs:
+    - "Pub 100-02 Ch 11 §60 (Case-Mix Adjustments – BMI threshold and factor)"
   conditions:
     - H_PATIENT_AGE > 17
     - (B_PATIENT_WGT / (B_PATIENT_HGT ^ 2)) * 10000 < 18.5
@@ -80,3 +341,519 @@
     - set:
         variable: LOW_BMI_TRACK
         value: "Y"
+---
+- rule_id: CAL-005B
+  name: BMI Factor Default (Non-Low BMI)
+  description: Set BMI factor to 1.000 when low BMI criteria are not met.
+  priority: 59
+  policy_refs:
+    - "Pub 100-02 Ch 11 §60 (Case-Mix Adjustments – BMI factor)"
+  conditions:
+    - H_PATIENT_AGE <= 17 OR (B_PATIENT_WGT / (B_PATIENT_HGT ^ 2)) * 10000 >= 18.5
+  actions:
+    - set:
+        variable: H_BUN_BMI_FACTOR
+        value: 1.000
+---
+- rule_id: CAL-007
+  name: QIP Reduction Mapping
+  description: Map QIP reduction code to percentage multiplier for payment reduction.
+  priority: 58
+  policy_refs:
+    - "42 CFR 413.177 (QIP payment reduction scale)"
+  conditions: []
+  actions:
+    - map:
+        variable: QIP_REDUCTION
+        mapping:
+          " ": 1.000
+          "1": 0.995
+          "2": 0.990
+          "3": 0.985
+          "4": 0.980
+---
+- rule_id: CAL-008
+  name: Patient Age Calculation
+  description: Calculate patient age based on bill thru date and DOB year/month.
+  priority: 57
+  policy_refs:
+    - "Pub 100-02 Ch 11 §60 (Case-Mix Adjustments – age calculation basis)"
+  conditions: []
+  actions:
+    - calculate:
+        variable: H_PATIENT_AGE
+        formula: B_THRU_CCYY - B_DOB_CCYY
+    - conditional:
+        if: B_DOB_MM > B_THRU_MM
+        then:
+          - calculate:
+              variable: H_PATIENT_AGE
+              formula: H_PATIENT_AGE - 1
+    - conditional:
+        if: H_PATIENT_AGE < 18
+        then:
+          - set:
+              variable: PEDIATRIC_TRACK
+              value: "Y"
+---
+- rule_id: CAL-009
+  name: Onset Factor Calculation
+  description: Compute onset days from dialysis start date and set onset factor for adults.
+  priority: 56
+  policy_refs:
+    - "Pub 100-02 Ch 11 §60 (Case-Mix Adjustments – onset factor)"
+  conditions:
+    - B_DIALYSIS_START_DATE > 0
+  actions:
+    - calculate:
+        variable: ONSET_DATE
+        formula: integer_of_date(B_LINE_ITEM_DATE_SERVICE) - integer_of_date(B_DIALYSIS_START_DATE) + 1
+    - conditional:
+        if: H_PATIENT_AGE > 17 AND ONSET_DATE <= 120
+        then:
+          - set:
+              variable: H_BUN_ONSET_FACTOR
+              value: CM_ONSET_LE_120
+          - set:
+              variable: ONSET_TRACK
+              value: "Y"
+        else:
+          - set:
+              variable: H_BUN_ONSET_FACTOR
+              value: 1.000
+---
+- rule_id: CAL-010
+  name: Comorbid Data Normalization (CWF Return Code)
+  description: Normalize comorbid data based on CWF return code before selecting the highest multiplier.
+  priority: 55
+  policy_refs:
+    - "Pub 100-02 Ch 11 §60 (Case-Mix Adjustments – comorbidities)"
+  conditions:
+    - COMORBID_CWF_RETURN_CODE != " "
+  actions:
+    - define_strategy:
+        strategy_name: CWF Return Code Normalization
+        mappings:
+          - code: "10"
+            action: "Clear COMORBID_DATA; clear COMORBID_CWF_RETURN_CODE"
+          - code: "20"
+            action: "Set COMORBID_DATA(1)='MA'; clear COMORBID_CWF_RETURN_CODE"
+          - code: "40"
+            action: "Set COMORBID_DATA(3)='MC'; clear COMORBID_CWF_RETURN_CODE"
+          - code: "50"
+            action: "Set COMORBID_DATA(4)='MD'; clear COMORBID_CWF_RETURN_CODE"
+          - code: "60"
+            action: "Set COMORBID_DATA(5)='ME'; clear COMORBID_CWF_RETURN_CODE"
+---
+- rule_id: CAL-011
+  name: Bundled Comorbid Multiplier Selection
+  description: Select the highest comorbid multiplier based on COMORBID_DATA and onset/pediatric rules.
+  priority: 54
+  policy_refs:
+    - "Pub 100-02 Ch 11 §60 (Case-Mix Adjustments – comorbidities)"
+  conditions: []
+  actions:
+    - conditional:
+        if: COMORBID_CWF_RETURN_CODE == " " AND H_PATIENT_AGE < 18
+        then:
+          - set:
+              variable: H_BUN_COMORBID_MULTIPLIER
+              value: 1.000
+          - set:
+              variable: PPS_2011_COMORBID_PAY
+              value: "10"
+        else:
+          - conditional:
+              if: COMORBID_CWF_RETURN_CODE == " " AND H_BUN_ONSET_FACTOR == CM_ONSET_LE_120
+              then:
+                - set:
+                    variable: H_BUN_COMORBID_MULTIPLIER
+                    value: 1.000
+                - set:
+                    variable: PPS_2011_COMORBID_PAY
+                    value: "10"
+              else:
+                - define_strategy:
+                    strategy_name: Comorbid Highest Multiplier
+                    description: Select highest of MA/MC/MD/ME in COMORBID_DATA.
+                    mappings:
+                      - code: "MA"
+                        multiplier: CM_GI_BLEED
+                        track: ACUTE_COMORBID_TRACK
+                        pay_code: "20"
+                      - code: "MC"
+                        multiplier: CM_PERICARDITIS
+                        track: ACUTE_COMORBID_TRACK
+                        pay_code: "40"
+                      - code: "MD"
+                        multiplier: CM_MYELODYSPLASTIC
+                        track: CHRONIC_COMORBID_TRACK
+                        pay_code: "50"
+                      - code: "ME"
+                        multiplier: CM_SICKEL_CELL
+                        track: CHRONIC_COMORBID_TRACK
+                        pay_code: "60"
+---
+- rule_id: CAL-012
+  name: Low Volume Factor
+  description: Apply low-volume multiplier for adult low-volume providers.
+  priority: 53
+  policy_refs:
+    - "Pub 100-02 Ch 11 §60 (Case-Mix Adjustments – low volume)"
+  conditions:
+    - P_PROV_LOW_VOLUME_INDIC == "Y"
+  actions:
+    - conditional:
+        if: H_PATIENT_AGE > 17
+        then:
+          - set:
+              variable: H_BUN_LOW_VOL_MULTIPLIER
+              value: CM_LOW_VOL_ADJ_LT_4000
+          - set:
+              variable: LOW_VOLUME_TRACK
+              value: "Y"
+        else:
+          - set:
+              variable: H_BUN_LOW_VOL_MULTIPLIER
+              value: 1.000
+---
+- rule_id: CAL-013
+  name: Rural Factor
+  description: Apply rural adjustment for adult patients in rural CBSA codes (<100).
+  priority: 52
+  policy_refs:
+    - "Pub 100-02 Ch 11 §60 (Case-Mix Adjustments – rural adjustment)"
+  conditions: []
+  actions:
+    - conditional:
+        if: P_GEO_CBSA < 100 AND H_PATIENT_AGE > 17
+        then:
+          - set:
+              variable: H_BUN_RURAL_MULTIPLIER
+              value: CM_RURAL
+        else:
+          - set:
+              variable: H_BUN_RURAL_MULTIPLIER
+              value: 1.000
+---
+- rule_id: CAL-014
+  name: Adjusted Base Wage Amount
+  description: Compute the bundled adjusted base wage amount by multiplying all applicable factors.
+  priority: 51
+  policy_refs:
+    - "Pub 100-02 Ch 11 §60 (Case-Mix Adjustments)"
+  conditions: []
+  actions:
+    - calculate:
+        variable: H_BUN_ADJUSTED_BASE_WAGE_AMT
+        formula: (H_BUN_BASE_WAGE_AMT * H_BUN_AGE_FACTOR) * (H_BUN_BSA_FACTOR * H_BUN_BMI_FACTOR) * (H_BUN_ONSET_FACTOR * H_BUN_COMORBID_MULTIPLIER) * H_BUN_LOW_VOL_MULTIPLIER * H_BUN_RURAL_MULTIPLIER
+---
+- rule_id: CAL-015
+  name: Training Add-On and Per-Diem Logic
+  description: Compute training add-on for self-care or per-diem amount for home dialysis.
+  priority: 50
+  policy_refs:
+    - "Pub 100-02 Ch 11 §60 (Training add-on and per-diem for home dialysis)"
+  conditions: []
+  actions:
+    - conditional:
+        if: B_COND_CODE IN ["73", "87"]
+        then:
+          - conditional:
+              if: H_BUN_ONSET_FACTOR == CM_ONSET_LE_120
+              then:
+                - set:
+                    variable: H_BUN_WAGE_ADJ_TRAINING_AMT
+                    value: 0
+              else:
+                - calculate:
+                    variable: H_BUN_WAGE_ADJ_TRAINING_AMT
+                    formula: TRAINING_ADD_ON_PMT_AMT * BUN_CBSA_W_INDEX
+                - set:
+                    variable: TRAINING_TRACK
+                    value: "Y"
+        else:
+          - conditional:
+              if: B_COND_CODE == "74" AND B_REV_CODE IN ["0841", "0851"]
+              then:
+                - calculate:
+                    variable: H_PER_DIEM_AMT_WITHOUT_HDPA
+                    formula: (H_BUN_ADJUSTED_BASE_WAGE_AMT * 3) / 7
+                - calculate:
+                    variable: H_PER_DIEM_AMT_WITH_HDPA
+                    formula: ((H_BUN_ADJUSTED_BASE_WAGE_AMT * 3) / 7) * ETC_HDPA_PCT
+              else:
+                - set:
+                    variable: H_BUN_WAGE_ADJ_TRAINING_AMT
+                    value: 0
+                - set:
+                    variable: H_PER_DIEM_AMT_WITHOUT_HDPA
+                    value: 0
+                - set:
+                    variable: H_PER_DIEM_AMT_WITH_HDPA
+                    value: 0
+---
+- rule_id: CAL-016
+  name: Final Payment (With and Without HDPA)
+  description: Compute final payment amounts using per-diem or full PPS logic.
+  priority: 49
+  policy_refs:
+    - "Pub 100-02 Ch 11 §60 (Per-treatment payment calculation)"
+  conditions: []
+  actions:
+    - conditional:
+        if: B_COND_CODE == "74" AND B_REV_CODE IN ["0841", "0851"]
+        then:
+          - calculate:
+              variable: H_FINAL_AMT_WITHOUT_HDPA
+              formula: H_PER_DIEM_AMT_WITHOUT_HDPA
+          - calculate:
+              variable: H_FINAL_AMT_WITH_HDPA
+              formula: H_PER_DIEM_AMT_WITH_HDPA
+          - calculate:
+              variable: H_FULL_CLAIM_AMT
+              formula: H_BUN_ADJUSTED_BASE_WAGE_AMT * ((B_CLAIM_NUM_DIALYSIS_SESSIONS * 3) / 7)
+        else:
+          - calculate:
+              variable: H_FINAL_AMT_WITHOUT_HDPA
+              formula: H_BUN_ADJUSTED_BASE_WAGE_AMT + H_BUN_WAGE_ADJ_TRAINING_AMT
+          - calculate:
+              variable: H_FINAL_AMT_WITH_HDPA
+              formula: (H_BUN_ADJUSTED_BASE_WAGE_AMT * ETC_HDPA_PCT) + H_BUN_WAGE_ADJ_TRAINING_AMT
+---
+- rule_id: CAL-017
+  name: TDAPA / TPNIES Add-On Payments
+  description: Add TDAPA and TPNIES per-treatment payments to final amounts.
+  priority: 48
+  policy_refs:
+    - "CMS-1732-F (CY2021 ESRD PPS Final Rule – TDAPA/TPNIES)"
+  conditions: []
+  actions:
+    - calculate:
+        variable: H_TDAPA_PAYMENT
+        formula: B_PAYER_ONLY_VC_Q8 / B_CLAIM_NUM_DIALYSIS_SESSIONS
+    - conditional:
+        if: B_PAYER_ONLY_VC_QG_AMT is NUMERIC
+        then:
+          - calculate:
+              variable: H_TPNIES_PAYMENT
+              formula: (0.65 * B_PAYER_ONLY_VC_QG_AMT) / B_CLAIM_NUM_DIALYSIS_SESSIONS
+    - calculate:
+        variable: H_FINAL_AMT_WITHOUT_HDPA
+        formula: H_FINAL_AMT_WITHOUT_HDPA + H_TDAPA_PAYMENT + H_TPNIES_PAYMENT
+    - calculate:
+        variable: H_FINAL_AMT_WITH_HDPA
+        formula: H_FINAL_AMT_WITH_HDPA + H_TDAPA_PAYMENT + H_TPNIES_PAYMENT
+---
+- rule_id: CAL-018
+  name: QIP Reduction Application
+  description: Apply QIP reduction to computed payment amounts for non-AKI claims.
+  priority: 47
+  policy_refs:
+    - "42 CFR 413.177 (QIP payment reduction scale)"
+  conditions:
+    - B_COND_CODE != "84"
+  actions:
+    - conditional:
+        if: P_QIP_REDUCTION != " "
+        then:
+          - calculate:
+              variable: H_FINAL_AMT_WITHOUT_HDPA
+              formula: H_FINAL_AMT_WITHOUT_HDPA * QIP_REDUCTION
+          - calculate:
+              variable: H_FINAL_AMT_WITH_HDPA
+              formula: H_FINAL_AMT_WITH_HDPA * QIP_REDUCTION
+          - calculate:
+              variable: PPS_2011_FULL_OUTLIER_RATE
+              formula: PPS_2011_FULL_OUTLIER_RATE * QIP_REDUCTION
+          - calculate:
+              variable: PPS_2011_BLEND_OUTLIER_RATE
+              formula: PPS_2011_BLEND_OUTLIER_RATE * QIP_REDUCTION
+---
+- rule_id: CAL-019
+  name: Network Reduction
+  description: Apply ESRD network reduction after QIP reduction.
+  priority: 46
+  policy_refs:
+    - "Pub 100-04 Ch 8 §110 (Network reduction)"
+  conditions: []
+  actions:
+    - conditional:
+        if: B_COND_CODE == "74" AND B_REV_CODE IN ["0841", "0851"]
+        then:
+          - set:
+              variable: H_NETWORK_REDUCTION
+              value: 0.21
+        else:
+          - set:
+              variable: H_NETWORK_REDUCTION
+              value: 0.50
+    - calculate:
+        variable: H_FINAL_AMT_WITHOUT_HDPA
+        formula: H_FINAL_AMT_WITHOUT_HDPA - H_NETWORK_REDUCTION
+    - calculate:
+        variable: H_FINAL_AMT_WITH_HDPA
+        formula: H_FINAL_AMT_WITH_HDPA - H_NETWORK_REDUCTION
+---
+- rule_id: CAL-020
+  name: HDPA Selection (ETC)
+  description: Select HDPA-adjusted or standard PPS payment based on ETC indicator.
+  priority: 45
+  policy_refs:
+    - "ETC Final Rule §512.300–§512.350 (HDPA)"
+  conditions:
+    - B_COND_CODE != "84"
+  actions:
+    - conditional:
+        if: B_DATA_CODE == "94"
+        then:
+          - map:
+              variable: PPS_2011_FULL_PPS_RATE
+              from: H_FINAL_AMT_WITH_HDPA
+          - map:
+              variable: ADJ_BASE_WAGE_BEFORE_ETC_HDPA
+              from: H_FINAL_AMT_WITHOUT_HDPA
+        else:
+          - map:
+              variable: PPS_2011_FULL_PPS_RATE
+              from: H_FINAL_AMT_WITHOUT_HDPA
+          - set:
+              variable: ADJ_BASE_WAGE_BEFORE_ETC_HDPA
+              value: 0
+---
+- rule_id: CAL-021
+  name: Outlier Factors and Payment
+  description: Calculate outlier factors, imputed MAP, and outlier payment for separately billable services.
+  priority: 44
+  policy_refs:
+    - "CMS-1732-F II.B.4.c (Outlier policy updates)"
+    - "Pub 100-02 Ch 11 §60 (Outlier methodology)"
+  conditions: []
+  actions:
+    - define_strategy:
+        strategy_name: Outlier Factors
+        description: Compute outlier age/BSA/BMI/onset/comorbid/low-vol/rural factors.
+        notes:
+          - "Age factors use SB-AGE* constants by age/mode."
+          - "BSA/BMI use same formulas as bundled factors, with SB multipliers."
+          - "Onset factor uses SB-ONSET-LE-120 for adults within 120 days."
+          - "Comorbid factor selects highest SB comorbid multiplier."
+          - "Low volume factor uses SB-LOW-VOL-ADJ-LT-4000."
+          - "Rural factor uses SB-RURAL when P_GEO_CBSA < 100 and adult."
+    - calculate:
+        variable: H_OUT_PREDICTED_SERVICES_MAP
+        formula: H_OUT_AGE_FACTOR * H_OUT_BSA_FACTOR * H_OUT_BMI_FACTOR * H_OUT_ONSET_FACTOR * H_OUT_COMORBID_MULTIPLIER * H_OUT_RURAL_MULTIPLIER * H_OUT_LOW_VOL_MULTIPLIER
+    - conditional:
+        if: H_PATIENT_AGE < 18
+        then:
+          - calculate:
+              variable: H_OUT_CM_ADJ_PREDICT_MAP_TRT
+              formula: H_OUT_PREDICTED_SERVICES_MAP * ADJ_AVG_MAP_AMT_LT_18
+          - set:
+              variable: H_OUT_ADJ_AVG_MAP_AMT
+              value: ADJ_AVG_MAP_AMT_LT_18
+        else:
+          - calculate:
+              variable: H_OUT_CM_ADJ_PREDICT_MAP_TRT
+              formula: H_OUT_PREDICTED_SERVICES_MAP * ADJ_AVG_MAP_AMT_GT_17
+          - set:
+              variable: H_OUT_ADJ_AVG_MAP_AMT
+              value: ADJ_AVG_MAP_AMT_GT_17
+    - conditional:
+        if: B_COND_CODE == "74" AND B_REV_CODE IN ["0841", "0851"]
+        then:
+          - calculate:
+              variable: H_OUT_IMPUTED_MAP
+              formula: B_TOT_PRICE_SB_OUTLIER / H_HEMO_EQUIV_DIAL_SESSIONS
+        else:
+          - calculate:
+              variable: H_OUT_IMPUTED_MAP
+              formula: B_TOT_PRICE_SB_OUTLIER / B_CLAIM_NUM_DIALYSIS_SESSIONS
+    - conditional:
+        if: H_PATIENT_AGE < 18
+        then:
+          - calculate:
+              variable: H_OUT_PREDICTED_MAP
+              formula: H_OUT_CM_ADJ_PREDICT_MAP_TRT + FIX_DOLLAR_LOSS_LT_18
+          - conditional:
+              if: H_OUT_IMPUTED_MAP > H_OUT_PREDICTED_MAP
+              then:
+                - calculate:
+                    variable: H_OUT_PAYMENT
+                    formula: (H_OUT_IMPUTED_MAP - H_OUT_PREDICTED_MAP) * LOSS_SHARING_PCT_LT_18
+                - set:
+                    variable: H_OUT_LOSS_SHARING_PCT
+                    value: LOSS_SHARING_PCT_LT_18
+                - set:
+                    variable: OUTLIER_TRACK
+                    value: "Y"
+              else:
+                - set:
+                    variable: H_OUT_PAYMENT
+                    value: 0
+        else:
+          - calculate:
+              variable: H_OUT_PREDICTED_MAP
+              formula: H_OUT_CM_ADJ_PREDICT_MAP_TRT + FIX_DOLLAR_LOSS_GT_17
+          - conditional:
+              if: H_OUT_IMPUTED_MAP > H_OUT_PREDICTED_MAP
+              then:
+                - calculate:
+                    variable: H_OUT_PAYMENT
+                    formula: (H_OUT_IMPUTED_MAP - H_OUT_PREDICTED_MAP) * LOSS_SHARING_PCT_GT_17
+                - set:
+                    variable: H_OUT_LOSS_SHARING_PCT
+                    value: LOSS_SHARING_PCT_GT_17
+                - set:
+                    variable: OUTLIER_TRACK
+                    value: "Y"
+              else:
+                - set:
+                    variable: H_OUT_PAYMENT
+                    value: 0
+    - conditional:
+        if: B_COND_CODE == "74" AND B_REV_CODE IN ["0841", "0851"]
+        then:
+          - calculate:
+              variable: H_OUT_PAYMENT
+              formula: H_OUT_PAYMENT * ((B_CLAIM_NUM_DIALYSIS_SESSIONS * 3) / 7)
+---
+- rule_id: CAL-022
+  name: Return Code Resolution Matrix
+  description: Assign PPS-RTC based on adjustment flags (outlier, comorbid, onset, low volume, training, pediatric, low BMI).
+  priority: 43
+  policy_refs:
+    - "RTCCPY (Return Code Definitions – internal pricer mapping)"
+  conditions: []
+  actions:
+    - define_matrix:
+        matrix_name: PPS_RTC_ASSIGNMENT
+        description: "See RTCCPY for complete matrix; derived from 9000-SET-RETURN-CODE logic."
+        inputs:
+          - OUTLIER_TRACK
+          - LOW_VOLUME_TRACK
+          - TRAINING_TRACK
+          - ACUTE_COMORBID_TRACK
+          - CHRONIC_COMORBID_TRACK
+          - ONSET_TRACK
+          - PEDIATRIC_TRACK
+          - LOW_BMI_TRACK
+---
+- rule_id: CAL-023
+  name: Low Volume Recovery Payments
+  description: Calculate low-volume recovery payments and adjust outlier amounts.
+  priority: 42
+  policy_refs:
+    - "Pub 100-02 Ch 11 §60 (Low-volume adjustment)"
+  conditions:
+    - LOW_VOLUME_TRACK == "Y"
+  actions:
+    - define_strategy:
+        strategy_name: Low Volume Recovery
+        description: "Compute low-volume full PPS and outlier payments, then net against standard values."
+        steps:
+          - "Compute H_LV_PPS_FINAL_PAY_AMT using low-volume multipliers."
+          - "Compute H_LV_OUT_PAYMENT using low-volume outlier logic."
+          - "H_LV_PPS_FINAL_PAY_AMT = H_LV_PPS_FINAL_PAY_AMT - H_PPS_FINAL_PAY_AMT"
+          - "H_LV_OUT_PAYMENT = H_LV_OUT_PAYMENT - H_OUT_PAYMENT"
+          - "H_LV_PPS_FINAL_PAY_AMT = H_LV_PPS_FINAL_PAY_AMT + H_LV_OUT_PAYMENT"
