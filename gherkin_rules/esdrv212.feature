@@ -5,7 +5,7 @@ Feature: Driver routing and exception handling (ESDRV212)
   # Effective: 2021-01-01 (Transmittal: TBD, Release: TBD)
 
   Background:
-    Given the pricer receives a claim
+    Given a claim is submitted for pricing
 
   Rule: Reject claims with invalid or pre-cutoff thru dates
     # Description: Claims with non-numeric or pre-2005-04-01 thru dates are rejected with return code 98.
@@ -17,9 +17,8 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-001
     Scenario: Reject claims with invalid or pre-cutoff thru dates
       Given the claim thru date is before 2005-04-01 or is non-numeric
-      When the driver validates the claim date
+      When the claim date is validated
       Then the return code is 98
-      And calculation is not executed
 
   Rule: Reject claims with non-numeric exception rate
     # Description: Exception rate must be numeric or the claim is rejected with return code 50.
@@ -31,9 +30,8 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-002
     Scenario: Reject claims with non-numeric exception rate
       Given the exception rate is non-numeric
-      When the driver validates the exception rate
+      When the exception rate is validated
       Then the return code is 50
-      And calculation is not executed
 
   Rule: Apply exception rate for pre-2011 claims
     # Description: For claims before 2011, a positive exception rate overrides standard processing.
@@ -46,7 +44,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     Scenario: Apply exception rate for pre-2011 claims
       Given the claim thru date is before 2011-01-01
       And the exception rate is greater than zero
-      When the driver processes the claim
+      When the claim is evaluated
       Then the final payment equals the exception rate
       And the return code is 1
 
@@ -62,12 +60,12 @@ Feature: Driver routing and exception handling (ESDRV212)
       Given the claim thru date is between 2011-01-01 and 2013-12-31
       And the Pacific Island Trust Territories indicator equals 2
       And the exception rate is greater than zero
-      When the driver processes the claim
+      When the claim is evaluated
       Then the final payment equals the exception rate
       And the return code is 1
 
   Rule: Route CY2021 claims to ESCAL212
-    # Description: Claims in CY2021 are routed to the 21.2 calculator.
+    # Description: CY2021 claims are routed to the 2021.2 calculation module.
     # Policy Citations:
     # - Internal/No policy citation found
     # Code Path Citations:
@@ -76,7 +74,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-005
     Scenario: Route CY2021 claims to ESCAL212
       Given the claim thru date is between 2021-01-01 and 2021-12-31
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL212 is called
 
   Rule: Route CY2020 H2 claims to ESCAL202
@@ -89,7 +87,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-006
     Scenario: Route CY2020 H2 claims to ESCAL202
       Given the claim thru date is between 2020-07-01 and 2020-12-31
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL202 is called
 
   Rule: Route CY2020 H1 claims to ESCAL200
@@ -102,7 +100,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-007
     Scenario: Route CY2020 H1 claims to ESCAL200
       Given the claim thru date is between 2020-01-01 and 2020-06-30
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL200 is called
 
   Rule: Route CY2019 claims to ESCAL191
@@ -115,7 +113,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-008
     Scenario: Route CY2019 claims to ESCAL191
       Given the claim thru date is between 2019-01-01 and 2019-12-31
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL191 is called
 
   Rule: Route CY2018 claims to ESCAL180
@@ -128,7 +126,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-009
     Scenario: Route CY2018 claims to ESCAL180
       Given the claim thru date is between 2018-01-01 and 2018-12-31
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL180 is called
 
   Rule: Route CY2017 H2 claims to ESCAL171
@@ -141,7 +139,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-010
     Scenario: Route CY2017 H2 claims to ESCAL171
       Given the claim thru date is between 2017-07-01 and 2017-12-31
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL171 is called
 
   Rule: Route CY2017 H1 claims to ESCAL170
@@ -154,7 +152,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-011
     Scenario: Route CY2017 H1 claims to ESCAL170
       Given the claim thru date is between 2017-01-01 and 2017-06-30
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL170 is called
 
   Rule: Route CY2016 claims to ESCAL160
@@ -167,7 +165,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-012
     Scenario: Route CY2016 claims to ESCAL160
       Given the claim thru date is between 2016-01-01 and 2016-12-31
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL160 is called
 
   Rule: Route CY2015 claims to ESCAL151
@@ -180,7 +178,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-013
     Scenario: Route CY2015 claims to ESCAL151
       Given the claim thru date is between 2015-01-01 and 2015-12-31
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL151 is called
 
   Rule: Route CY2014 claims to ESCAL140
@@ -193,7 +191,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-014
     Scenario: Route CY2014 claims to ESCAL140
       Given the claim thru date is between 2014-01-01 and 2014-12-31
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL140 is called
 
   Rule: Route CY2013 claims to ESCAL130
@@ -206,7 +204,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-015
     Scenario: Route CY2013 claims to ESCAL130
       Given the claim thru date is between 2013-01-01 and 2013-12-31
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL130 is called
 
   Rule: Route CY2012 claims to ESCAL122
@@ -219,7 +217,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-016
     Scenario: Route CY2012 claims to ESCAL122
       Given the claim thru date is between 2012-01-01 and 2012-12-31
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL122 is called
 
   Rule: Route CY2011 claims to ESCAL117
@@ -232,7 +230,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-017
     Scenario: Route CY2011 claims to ESCAL117
       Given the claim thru date is between 2011-01-01 and 2011-12-31
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL117 is called
 
   Rule: Route CY2010 claims to ESCAL100
@@ -245,7 +243,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-018
     Scenario: Route CY2010 claims to ESCAL100
       Given the claim thru date is between 2010-01-01 and 2010-12-31
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL100 is called
 
   Rule: Route CY2009 claims to ESCAL091
@@ -258,7 +256,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-019
     Scenario: Route CY2009 claims to ESCAL091
       Given the claim thru date is between 2009-01-01 and 2009-12-31
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL091 is called
 
   Rule: Route CY2008 claims to ESCAL080
@@ -271,7 +269,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-020
     Scenario: Route CY2008 claims to ESCAL080
       Given the claim thru date is between 2008-01-01 and 2008-12-31
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL080 is called
 
   Rule: Route CY2007 H2 claims to ESCAL071
@@ -284,7 +282,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-021
     Scenario: Route CY2007 H2 claims to ESCAL071
       Given the claim thru date is between 2007-04-01 and 2007-12-31
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL071 is called
 
   Rule: Route CY2007 H1 claims to ESCAL070
@@ -297,7 +295,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-022
     Scenario: Route CY2007 H1 claims to ESCAL070
       Given the claim thru date is between 2007-01-01 and 2007-03-31
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL070 is called
 
   Rule: Route CY2006 claims to ESCAL062
@@ -310,7 +308,7 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-023
     Scenario: Route CY2006 claims to ESCAL062
       Given the claim thru date is between 2006-01-01 and 2006-12-31
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL062 is called
 
   Rule: Route CY2005 claims to ESCAL056
@@ -323,5 +321,5 @@ Feature: Driver routing and exception handling (ESDRV212)
     @rule_id:DRV-024
     Scenario: Route CY2005 claims to ESCAL056
       Given the claim thru date is between 2005-04-01 and 2005-12-31
-      When the driver routes the claim
+      When the claim is routed by service date
       Then the calculation module ESCAL056 is called

@@ -5,7 +5,7 @@ Feature: Composite CBSA wage index reference table (BASECBSA)
   # Effective: 2006-01-01 (Transmittal: TBD, Release: TBD)
 
   Background:
-    Given the pricer receives a claim
+    Given a claim is submitted for pricing
 
   Rule: Composite CBSA table enumerates wage index factors
     # Description: Composite CBSA records provide wage index factors by effective date and geography.
@@ -17,6 +17,6 @@ Feature: Composite CBSA wage index reference table (BASECBSA)
     @rule_id:REF-BASECBSA-001
     Scenario: Use composite CBSA wage index records
       Given a claim requires a composite CBSA wage index
-      When the pricer references the composite CBSA table
+      When the composite CBSA wage index is looked up
       Then the effective wage index factor is selected for the claim
       And the factor is available for downstream calculations

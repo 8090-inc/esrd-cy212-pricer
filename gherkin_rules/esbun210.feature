@@ -5,7 +5,7 @@ Feature: Bundled CBSA wage index table (ESBUN210)
   # Effective: 2011-01-01 (Transmittal: TBD, Release: TBD)
 
   Background:
-    Given the pricer receives a claim
+    Given a claim is submitted for pricing
 
   Rule: Bundled CBSA date table defines effective date codes
     # Description: Bundled wage index lookups use the BUN-DATE table of effective dates and codes.
@@ -17,7 +17,7 @@ Feature: Bundled CBSA wage index table (ESBUN210)
     @rule_id:REF-BUN-001
     Scenario: Use bundled CBSA date table for effective dating
       Given a claim date is evaluated for bundled wage index lookup
-      When the driver consults bundled wage index effective dates
+      When bundled wage index effective dates are applied
       Then the effective date table provides the correct date code
       And the date table governs bundled CBSA selection
 
@@ -31,6 +31,6 @@ Feature: Bundled CBSA wage index table (ESBUN210)
     @rule_id:REF-BUN-002
     Scenario: Use bundled CBSA mapping entries for lookup
       Given a claim includes a CBSA code
-      When the driver searches the bundled CBSA mapping table
+      When the bundled CBSA mapping is looked up
       Then the CBSA entry is found using the bundled table mapping
       And the mapping points to the correct wage index record

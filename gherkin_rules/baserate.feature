@@ -5,7 +5,7 @@ Feature: Base rate reference table (BASERATE)
   # Effective: 2005-04-01 (Transmittal: TBD, Release: TBD)
 
   Background:
-    Given the pricer receives a claim
+    Given a claim is submitted for pricing
 
   Rule: Base rate table enumerates effective base payment rates
     # Description: Base rate records include effective date and rate values by geographic identifier.
@@ -17,6 +17,6 @@ Feature: Base rate reference table (BASERATE)
     @rule_id:REF-BASE-001
     Scenario: Use base rate records for payment initialization
       Given a claim requires a base payment rate
-      When the pricer references the base rate table
+      When the base rate is looked up
       Then the effective base rate is selected for the claim
       And the base rate is available for downstream calculations

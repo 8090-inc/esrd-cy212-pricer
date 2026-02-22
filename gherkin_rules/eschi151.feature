@@ -5,7 +5,7 @@ Feature: Children's hospital wage index override table (ESCHI151)
   # Effective: 2015-01-01 (Transmittal: TBD, Release: TBD)
 
   Background:
-    Given the pricer receives a claim
+    Given a claim is submitted for pricing
 
   Rule: Children's hospital override table defines provider-specific wage indexes
     # Description: The table maps provider numbers to special wage index values used by the driver.
@@ -17,6 +17,6 @@ Feature: Children's hospital wage index override table (ESCHI151)
     @rule_id:REF-CHILD-001
     Scenario: Use children's hospital provider override values
       Given a provider matches a children's hospital entry
-      When the driver searches the children's hospital table
+      When the children\'s hospital override list is checked
       Then the mapped wage index override is available for use
       And the override list contains provider-specific wage indexes

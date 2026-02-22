@@ -5,7 +5,7 @@ Feature: <Feature name>
   # Effective: <YYYY-MM-DD> (Transmittal: <ID>, Release: <ID>)
 
   Background:
-    Given the pricer receives a claim
+    Given a claim is submitted for pricing
 
   Rule: <Rule title>
     # Description: <business rationale and intent>

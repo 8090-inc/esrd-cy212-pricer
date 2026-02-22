@@ -5,7 +5,7 @@ Feature: Return code definitions (RTCCPY)
   # Effective: 2011-01-01 (Transmittal: TBD, Release: TBD)
 
   Background:
-    Given the pricer produces a return code
+    Given a return code is produced
 
   Rule: Calculation return codes define adjustment combinations
     # Description: PPS-RTC codes 02-35 map to adjustment combinations (outlier, training, comorbid, low volume, etc.).
@@ -16,7 +16,7 @@ Feature: Return code definitions (RTCCPY)
 
     @rule_id:REF-RTC-001
     Scenario: Interpret calculation return codes
-      Given the calculator sets PPS-RTC
+      Given the return code is set
       When the return code is between 02 and 35
       Then the code maps to a defined adjustment combination
       And the meaning matches the return code table
@@ -30,7 +30,7 @@ Feature: Return code definitions (RTCCPY)
 
     @rule_id:REF-RTC-002
     Scenario: Interpret validation error return codes
-      Given the calculator or driver rejects a claim
+      Given a claim is rejected
       When the return code is between 50 and 99
       Then the code indicates the validation failure reason
       And the meaning matches the return code table

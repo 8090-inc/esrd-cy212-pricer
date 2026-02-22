@@ -5,10 +5,10 @@ Feature: Wage index and reference table lookup (ESDRV212)
   # Effective: 2021-01-01 (Transmittal: TBD, Release: TBD)
 
   Background:
-    Given the pricer receives a claim
+    Given a claim is submitted for pricing
 
   Rule: Find MSA wage adjusted rate by claim date and MSA
-    # Description: The driver searches the MSA table by claim date and MSA code; missing entries return RTC 60.
+    # Description: MSA wage rate is looked up by claim date and MSA code; missing entries return RTC 60.
     # Policy Citations:
     # - FR-2020-24485 Wage index applied to labor-related share (52.3%) (P31:L6474-6483)
     # Code Path Citations:
@@ -17,12 +17,12 @@ Feature: Wage index and reference table lookup (ESDRV212)
     @rule_id:DRV-WAGE-001
     Scenario: Locate MSA wage adjusted rate or return RTC 60
       Given a claim includes an MSA code
-      When the driver searches the MSA wage table for the claim date
+      When the wage index is looked up for the claim date
       Then the wage rate is retrieved when the MSA is found
       And missing MSA results return code 60
 
   Rule: Resolve MSA wage rate by effective date
-    # Description: The driver selects the most recent wage rate effective for the claim date; if none, rates are zeroed.
+    # Description: The most recent wage rate effective for the claim date is selected; if none, rates are zeroed.
     # Policy Citations:
     # - FR-2020-24485 Wage index applied to labor-related share (52.3%) (P31:L6474-6483)
     # Code Path Citations:
@@ -31,7 +31,7 @@ Feature: Wage index and reference table lookup (ESDRV212)
     @rule_id:DRV-WAGE-002
     Scenario: Select effective MSA wage rate for claim date
       Given a claim includes an MSA code and effective dates
-      When the driver compares wage index date codes to the claim date
+      When effective dates are compared to the claim date
       Then the most recent effective wage rates are selected
       And if none are found the wage rates are set to zero
 
@@ -45,12 +45,12 @@ Feature: Wage index and reference table lookup (ESDRV212)
     @rule_id:DRV-WAGE-003
     Scenario: Use special wage index when special payment indicator is set
       Given the special payment indicator is set to "1"
-      When the driver retrieves the composite CBSA wage index
+      When the wage index is looked up
       Then the provider-supplied special wage index is used
       And standard CBSA lookup is bypassed
 
   Rule: Composite CBSA lookup by claim date and CBSA
-    # Description: The driver selects the correct composite CBSA index; missing CBSA sets RTC 60/61 depending on runtime.
+    # Description: Composite CBSA index is selected; missing CBSA sets RTC 60/61 depending on runtime.
     # Policy Citations:
     # - FR-2020-24485 Wage index applied to labor-related share (52.3%) (P31:L6474-6483)
     # Code Path Citations:
@@ -59,12 +59,12 @@ Feature: Wage index and reference table lookup (ESDRV212)
     @rule_id:DRV-WAGE-004
     Scenario: Locate composite CBSA wage index or return RTC 60/61
       Given a claim includes a CBSA code
-      When the driver searches the composite CBSA table for the claim date
+      When the wage index is looked up for the claim date
       Then the composite wage index is retrieved when the CBSA is found
       And missing CBSA results in return code 60 or 61 depending on runtime
 
   Rule: Resolve composite CBSA wage index by effective date
-    # Description: The driver walks back the CBSA index pointer to find the effective date; otherwise sets index to zero.
+    # Description: Effective composite CBSA index is selected by date; otherwise the index defaults to zero.
     # Policy Citations:
     # - FR-2020-24485 Wage index applied to labor-related share (52.3%) (P31:L6474-6483)
     # Code Path Citations:
@@ -73,7 +73,7 @@ Feature: Wage index and reference table lookup (ESDRV212)
     @rule_id:DRV-WAGE-005
     Scenario: Select effective composite CBSA wage index for claim date
       Given a claim includes a CBSA code and effective dates
-      When the driver compares composite CBSA date codes to the claim date
+      When effective dates are compared to the claim date
       Then the most recent effective composite wage index is selected
       And if none are found the composite wage index is set to zero
 
@@ -87,7 +87,7 @@ Feature: Wage index and reference table lookup (ESDRV212)
     @rule_id:DRV-WAGE-006
     Scenario: Use special wage index for bundled CBSA lookup
       Given the special payment indicator is set to "1"
-      When the driver retrieves the bundled CBSA wage index
+      When the wage index is looked up
       Then the provider-supplied special wage index is used
       And standard bundled CBSA lookup is bypassed
 
@@ -102,12 +102,12 @@ Feature: Wage index and reference table lookup (ESDRV212)
     @rule_id:DRV-WAGE-007
     Scenario: Apply children's hospital wage index override
       Given the claim is in CY2015 and the provider matches the children's hospital list
-      When the driver searches the children's hospital table
+      When the wage index is looked up
       Then the bundled CBSA wage index is overridden by the hospital-specific index
       And the standard CBSA lookup is skipped
 
   Rule: Bundled CBSA lookup by claim date and CBSA
-    # Description: The driver searches bundled CBSA by claim date and CBSA code; missing entries return RTC 60/61.
+    # Description: Bundled CBSA wage index is looked up by claim date and CBSA code; missing entries return RTC 60/61.
     # Policy Citations:
     # - FR-2020-24485 Wage index applied to labor-related share (52.3%) (P31:L6474-6483)
     # Code Path Citations:
@@ -116,7 +116,7 @@ Feature: Wage index and reference table lookup (ESDRV212)
     @rule_id:DRV-WAGE-008
     Scenario: Locate bundled CBSA wage index or return RTC 60/61
       Given a claim includes a CBSA code
-      When the driver searches the bundled CBSA table for the claim date
+      When the wage index is looked up for the claim date
       Then the bundled wage index is retrieved when the CBSA is found
       And missing CBSA results in return code 60 or 61 depending on runtime
 
@@ -130,12 +130,12 @@ Feature: Wage index and reference table lookup (ESDRV212)
     @rule_id:DRV-WAGE-009
     Scenario: Cap supplemental wage index decrease to 5%
       Given the claim date is after 2020-09-30 and supplemental wage index is enabled
-      When the driver computes the supplemental wage index ratio
+      When the wage index change is calculated
       Then decreases greater than 5% are capped at 5%
       And missing prior wage index results in return code 60
 
   Rule: Bundled CBSA rate must match claim year
-    # Description: The driver enforces wage index year matching claim year and returns RTC 60 if no matching year is found.
+    # Description: Wage index year must match the claim year; otherwise RTC 60 is returned.
     # Policy Citations:
     # - FR-2020-24485 Wage index applied to labor-related share (52.3%) (P31:L6474-6483)
     # Code Path Citations:
@@ -144,6 +144,6 @@ Feature: Wage index and reference table lookup (ESDRV212)
     @rule_id:DRV-WAGE-010
     Scenario: Enforce bundled CBSA year match
       Given a claim includes a CBSA wage index record
-      When the driver validates the wage index year against the claim year
+      When the wage index year is matched to the claim year
       Then only matching-year indexes are used
       And missing matches result in return code 60

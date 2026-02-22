@@ -5,7 +5,7 @@ Feature: Dialog system control block (DSCNTRL)
   # Effective: 2005-04-01 (Transmittal: TBD, Release: TBD)
 
   Background:
-    Given the driver evaluates environment-specific error codes
+    Given environment-specific error codes are evaluated
 
   Rule: Dialog system error codes define runtime error handling
     # Description: DS-ERROR-CODE and related flags determine mainframe vs PC error handling branches.
@@ -17,6 +17,6 @@ Feature: Dialog system control block (DSCNTRL)
     @rule_id:REF-DS-001
     Scenario: Use dialog system error codes to branch runtime behavior
       Given the dialog system control block is loaded
-      When the driver checks DS-ERROR-CODE or related flags
+      When environment error codes are checked
       Then the runtime path is determined by the control block values
       And error handling follows the appropriate environment rules

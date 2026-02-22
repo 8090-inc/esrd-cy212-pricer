@@ -5,7 +5,7 @@ Feature: Bundled CBSA wage index reference table (BUNDCBSA)
   # Effective: 2011-01-01 (Transmittal: TBD, Release: TBD)
 
   Background:
-    Given the pricer receives a claim
+    Given a claim is submitted for pricing
 
   Rule: Bundled CBSA table enumerates wage index factors
     # Description: Bundled CBSA records provide wage index factors by effective date and geography.
@@ -17,6 +17,6 @@ Feature: Bundled CBSA wage index reference table (BUNDCBSA)
     @rule_id:REF-BUNDCBSA-001
     Scenario: Use bundled CBSA wage index records
       Given a claim requires a bundled CBSA wage index
-      When the pricer references the bundled CBSA table
+      When the bundled CBSA wage index is looked up
       Then the effective wage index factor is selected for the claim
       And the factor is available for downstream calculations

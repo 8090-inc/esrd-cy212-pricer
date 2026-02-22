@@ -5,7 +5,7 @@ Feature: Shared wage index records (WAGECPY)
   # Effective: 2005-04-01 (Transmittal: TBD, Release: TBD)
 
   Background:
-    Given the pricer receives a claim
+    Given a claim is submitted for pricing
 
   Rule: Wage copybook defines MSA wage adjusted rate record
     # Description: MSA wage adjusted rate fields are passed from driver to calculator.
@@ -16,8 +16,8 @@ Feature: Shared wage index records (WAGECPY)
 
     @rule_id:REF-WAGECPY-001
     Scenario: Use MSA wage adjusted rate fields
-      Given the driver retrieves MSA wage rates
-      When the calculator receives WAGE-NEW-RATE-RECORD
+      Given MSA wage rate data is available
+      When wage rate inputs are received
       Then the MSA wage adjusted rate fields are available
       And the effective date is included
 
@@ -30,7 +30,7 @@ Feature: Shared wage index records (WAGECPY)
 
     @rule_id:REF-WAGECPY-002
     Scenario: Use CBSA wage index records
-      Given the driver retrieves CBSA wage indexes
-      When the calculator receives wage index records
+      Given CBSA wage index data is available
+      When wage index inputs are received
       Then composite and bundled CBSA wage index fields are available
       And the effective dates are included

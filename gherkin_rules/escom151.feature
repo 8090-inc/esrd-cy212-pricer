@@ -5,7 +5,7 @@ Feature: Composite CBSA wage index table (ESCOM151)
   # Effective: 2006-01-01 (Transmittal: TBD, Release: TBD)
 
   Background:
-    Given the pricer receives a claim
+    Given a claim is submitted for pricing
 
   Rule: Composite CBSA date table defines effective date codes
     # Description: Composite wage index lookups use the COM-DATE table of effective dates and codes.
@@ -17,7 +17,7 @@ Feature: Composite CBSA wage index table (ESCOM151)
     @rule_id:REF-COM-001
     Scenario: Use composite CBSA date table for effective dating
       Given a claim date is evaluated for composite wage index lookup
-      When the driver consults composite wage index effective dates
+      When composite wage index effective dates are applied
       Then the effective date table provides the correct date code
       And the date table governs composite CBSA selection
 
@@ -31,6 +31,6 @@ Feature: Composite CBSA wage index table (ESCOM151)
     @rule_id:REF-COM-002
     Scenario: Use composite CBSA mapping entries for lookup
       Given a claim includes a CBSA code
-      When the driver searches the composite CBSA mapping table
+      When the composite CBSA mapping is looked up
       Then the CBSA entry is found using the composite table mapping
       And the mapping points to the correct wage index record

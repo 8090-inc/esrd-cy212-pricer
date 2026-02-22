@@ -7,7 +7,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
   # Effective: 2020-07-01 (Transmittal: TBD, Release: TBD)
 
   Background:
-    Given the pricer receives a claim
+    Given a claim is submitted for pricing
 
 
   Rule: Force full PPS processing for all claims
@@ -20,7 +20,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-001O
     Scenario: Force waive-blend indicator to Y
       Given a claim is loaded for pricing
-      When the pricer initializes claim processing
+      When pricing begins
       Then the waive-blend indicator is set to "Y"
       And full PPS processing is enforced
 
@@ -34,7 +34,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-001P
     Scenario: AKI claims bypass bundled factor calculations
       Given the claim condition code is 84
-      When the pricer processes the claim after initialization
+      When pricing continues after initialization
       Then the final payment equals the bundled base wage amount
       And the return code is 02
 
@@ -48,7 +48,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-000
     Scenario: Reject claims with invalid condition codes
       Given the claim condition code is not 73, 74, 84, 87, or blank
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 58
       And calculation is not executed
 
@@ -62,7 +62,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-001A
     Scenario: Reject claims with invalid provider type
       Given the provider type is not 40, 41, or 05
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 52
       And calculation is not executed
 
@@ -76,7 +76,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-001B
     Scenario: Reject claims with invalid special payment indicator
       Given the special payment indicator is not "1" or blank
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 53
       And calculation is not executed
 
@@ -90,7 +90,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-001N
     Scenario: Reject claims with invalid date of birth
       Given the date of birth is missing or non-numeric
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 54
       And calculation is not executed
 
@@ -104,7 +104,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-001E
     Scenario: Reject non-AKI claims with invalid weight
       Given the claim is not AKI and weight is zero or non-numeric
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 55
       And calculation is not executed
 
@@ -118,7 +118,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-001F
     Scenario: Reject non-AKI claims with invalid height
       Given the claim is not AKI and height is zero or non-numeric
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 56
       And calculation is not executed
 
@@ -132,7 +132,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-001C
     Scenario: Reject claims with invalid revenue code
       Given the revenue code is not 0821, 0831, 0841, 0851, or 0881
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 57
       And calculation is not executed
 
@@ -146,7 +146,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-001D
     Scenario: Reject claims with invalid QIP reduction code
       Given the QIP reduction code is not 1, 2, 3, 4, or blank
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 53
       And calculation is not executed
 
@@ -160,7 +160,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-001G
     Scenario: Reject non-AKI claims with height over 300
       Given the claim is not AKI and height exceeds 300
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 71
       And calculation is not executed
 
@@ -174,7 +174,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-001H
     Scenario: Reject non-AKI claims with weight over 500
       Given the claim is not AKI and weight exceeds 500
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 72
       And calculation is not executed
 
@@ -188,7 +188,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-001I
     Scenario: Reject claims with invalid dialysis session count
       Given the dialysis session count is zero or non-numeric
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 73
       And calculation is not executed
 
@@ -202,7 +202,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-001J
     Scenario: Reject claims with invalid line item date of service
       Given the line item date of service is zero or non-numeric
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 74
       And calculation is not executed
 
@@ -216,7 +216,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-001K
     Scenario: Reject claims with invalid dialysis start date
       Given the dialysis start date is non-numeric
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 75
       And calculation is not executed
 
@@ -230,7 +230,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-001L
     Scenario: Reject claims with invalid outlier total charges
       Given the outlier total charges are non-numeric
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 76
       And calculation is not executed
 
@@ -244,7 +244,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-001M
     Scenario: Reject non-AKI claims with invalid comorbid return code
       Given the claim is not AKI and the comorbid return code is not blank, 10, 20, 40, 50, or 60
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 81
       And calculation is not executed
 
@@ -258,7 +258,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-002
     Scenario: Compute bundled base wage amount
       Given the claim has a bundled base payment rate and wage index
-      When the pricer initializes bundled wage calculations
+      When base wage calculations begin
       Then the bundled base wage amount equals labor plus non-labor portions
       And the base wage amount is stored for downstream adjustments
 
@@ -272,7 +272,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-008
     Scenario: Compute patient age for factor selection
       Given the claim includes DOB and thru date
-      When the pricer computes patient age
+      When patient age is determined
       Then age is adjusted for birth month relative to service month
       And pediatric tracking is set when age is under 18
 
@@ -286,7 +286,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-007
     Scenario: Map QIP reduction codes to reduction factors
       Given a claim includes a QIP reduction code
-      When the pricer maps the code to a reduction factor
+      When the reduction factor is determined
       Then the correct QIP reduction factor is selected
       And it is used later in QIP application
 
@@ -300,7 +300,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-010
     Scenario: Normalize comorbid data for consistent evaluation
       Given a claim includes a CWF comorbid return code
-      When the pricer normalizes comorbid data
+      When comorbidity codes are interpreted for evaluation
       Then comorbid data is moved to holding and mapped to MA/MC/MD/ME as appropriate
       And the original values are preserved for later restoration
 
@@ -314,7 +314,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-003A
     Scenario: Apply pediatric age adjustment factors
       Given the patient age is under 18
-      When the pricer selects age adjustment factors
+      When age adjustment factors are selected
       Then the pediatric factor is selected based on age band and modality
       And the factor is stored for bundled calculations
 
@@ -328,7 +328,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-003B
     Scenario: Apply adult age adjustment factors
       Given the patient age is 18 or older
-      When the pricer selects age adjustment factors
+      When age adjustment factors are selected
       Then the adult factor is selected based on age band
       And the factor is stored for bundled calculations
 
@@ -342,7 +342,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-004
     Scenario: Compute BSA adjustment factor
       Given patient height and weight are available
-      When the pricer computes BSA and the BSA factor
+      When BSA is calculated
       Then adult BSA factor is computed from the BSA formula
       And pediatric BSA factor defaults to 1.000
 
@@ -356,7 +356,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-004B
     Scenario: Default pediatric BSA factor to 1.000
       Given the patient age is under 18
-      When the pricer applies the BSA factor
+      When the BSA factor is applied
       Then the BSA factor is 1.000
       And no additional BSA adjustment is applied
 
@@ -370,7 +370,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-005
     Scenario: Compute BMI adjustment factor
       Given patient height and weight are available
-      When the pricer computes BMI
+      When BMI is calculated
       Then low BMI factor is applied for adults below 18.5
       And otherwise BMI factor defaults to 1.000
 
@@ -384,7 +384,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-005B
     Scenario: Default BMI factor to 1.000 when low BMI criteria are not met
       Given the patient does not meet low BMI criteria
-      When the pricer applies the BMI factor
+      When the BMI factor is applied
       Then the BMI factor is 1.000
       And no low BMI adjustment is applied
 
@@ -398,7 +398,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-009
     Scenario: Apply onset adjustment factor
       Given dialysis start date and service date are present
-      When the pricer computes onset days
+      When dialysis onset days are calculated
       Then adult claims within 120 days receive the onset factor
       And others receive a factor of 1.000
 
@@ -413,7 +413,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-011
     Scenario: Select bundled comorbid multiplier
       Given comorbid data and CWF return codes are available
-      When the pricer selects the bundled comorbid multiplier
+      When the comorbidity adjustment is selected
       Then the highest paying comorbid category is applied
       And comorbid tracking flags are updated
 
@@ -427,7 +427,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-012
     Scenario: Apply low volume multiplier for adults
       Given provider low volume indicator is Y
-      When the pricer evaluates low volume eligibility
+      When low-volume eligibility is evaluated
       Then adult claims receive the low volume multiplier
       And pediatric claims default to 1.000
 
@@ -441,7 +441,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-013
     Scenario: Apply rural adjustment multiplier
       Given the facility CBSA code is below 100
-      When the pricer evaluates rural eligibility
+      When rural eligibility is evaluated
       Then adult claims receive the rural multiplier
       And others receive a multiplier of 1.000
 
@@ -455,7 +455,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-014
     Scenario: Compute adjusted base wage amount
       Given all bundled case-mix factors are available
-      When the pricer computes the adjusted base wage amount
+      When the base payment is adjusted
       Then the base wage amount is multiplied by the case-mix factors
       And the adjusted base wage amount is stored
 
@@ -469,7 +469,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-015
     Scenario: Apply training add-on or per-diem logic
       Given the claim includes condition and revenue codes
-      When the pricer evaluates training or per-diem eligibility
+      When training or per-diem eligibility is evaluated
       Then training add-on or per-diem amounts are computed as appropriate
       And non-eligible claims receive zero add-on
 
@@ -483,7 +483,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-016
     Scenario: Compute final bundled payment
       Given the claim has adjusted base and any training or per-diem amounts
-      When the pricer computes the bundled final payment
+      When the bundled payment is calculated
       Then the correct final amount is computed for the claim type
       And with-HDPA and without-HDPA amounts are stored
 
@@ -497,7 +497,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-017
     Scenario: Apply TDAPA add-on
       Given the claim includes payer-only TDAPA values
-      When the pricer computes add-on payments
+      When add-on payments are calculated
       Then TDAPA per-treatment add-on is calculated
       And the add-on is included in final amounts
 
@@ -512,7 +512,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-020
     Scenario: Select HDPA payment path for ETC claims
       Given the claim includes the ETC HDPA data code
-      When the pricer selects HDPA or non-HDPA amounts
+      When HDPA eligibility is determined
       Then with-HDPA amounts are selected for data code 94
       And non-HDPA amounts are selected otherwise
 
@@ -526,7 +526,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-021
     Scenario: Calculate outlier payment
       Given the claim includes outlier charge data and required case-mix inputs
-      When the pricer calculates outlier factors and payments
+      When outlier payment is calculated
       Then the outlier payment is computed using predicted vs imputed MAP
       And per-diem adjustments are applied when applicable
 
@@ -541,7 +541,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-023
     Scenario: Compute low-volume recovery payment
       Given the low-volume indicator is set for an adult claim
-      When the pricer computes low-volume recovery payments
+      When low-volume recovery is calculated
       Then low-volume PPS and outlier payments are recalculated
       And the recovery amount is stored
 
@@ -555,7 +555,7 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-022
     Scenario: Assign return code based on adjustment combinations
       Given the claim has one or more adjustment tracking flags set
-      When the pricer resolves the return code
+      When the return code is determined
       Then the return code reflects the correct adjustment combination
       And the return code is set for output
 
@@ -569,6 +569,6 @@ Feature: ESRD PPS calculation engine (ESCAL202)
     @rule_id:CAL202-018
     Scenario: Apply QIP reduction to payment amounts
       Given the claim is not AKI and has a QIP reduction factor
-      When the pricer applies QIP reduction
+      When QIP reduction is applied
       Then all applicable payment amounts are reduced by the QIP factor
       And QIP reductions are reflected in final outputs

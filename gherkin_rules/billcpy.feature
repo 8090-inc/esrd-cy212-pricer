@@ -5,7 +5,7 @@ Feature: Claim input/output record layout (BILLCPY)
   # Effective: 2005-04-01 (Transmittal: TBD, Release: TBD)
 
   Background:
-    Given the pricer receives a claim
+    Given a claim is submitted for pricing
 
   Rule: Bill copybook defines required claim inputs
     # Description: The bill record defines condition, revenue, patient, and provider fields used in rules.
@@ -17,6 +17,6 @@ Feature: Claim input/output record layout (BILLCPY)
     @rule_id:REF-BILL-001
     Scenario: Use bill input fields for pricing rules
       Given a claim is represented by BILL-NEW-DATA
-      When the pricer validates and prices the claim
+      When the claim is validated and priced
       Then the defined bill fields provide required inputs
       And the field layout is used consistently across modules

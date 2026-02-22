@@ -5,7 +5,7 @@ Feature: ESRD PPS calculation engine (ESCAL100)
   # Effective: 2010-01-01 (Transmittal: TBD, Release: TBD)
 
   Background:
-    Given the pricer receives a claim
+    Given a claim is submitted for pricing
 
 
   Rule: Validate special payment indicator
@@ -18,7 +18,7 @@ Feature: ESRD PPS calculation engine (ESCAL100)
     @rule_id:CAL100-001B
     Scenario: Reject claims with invalid special payment indicator
       Given the special payment indicator is not "1" or blank
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 53
       And calculation is not executed
 
@@ -32,7 +32,7 @@ Feature: ESRD PPS calculation engine (ESCAL100)
     @rule_id:CAL100-001N
     Scenario: Reject claims with invalid date of birth
       Given the date of birth is missing or non-numeric
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 54
       And calculation is not executed
 
@@ -46,7 +46,7 @@ Feature: ESRD PPS calculation engine (ESCAL100)
     @rule_id:CAL100-001E
     Scenario: Reject claims with invalid weight
       Given the patient weight is zero or non-numeric
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 55
       And calculation is not executed
 
@@ -60,7 +60,7 @@ Feature: ESRD PPS calculation engine (ESCAL100)
     @rule_id:CAL100-001F
     Scenario: Reject claims with invalid height
       Given the patient height is zero or non-numeric
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 56
       And calculation is not executed
 
@@ -74,7 +74,7 @@ Feature: ESRD PPS calculation engine (ESCAL100)
     @rule_id:CAL100-001C
     Scenario: Reject claims with invalid revenue code
       Given the revenue code is not an allowed dialysis revenue code
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 57
       And calculation is not executed
 
@@ -88,7 +88,7 @@ Feature: ESRD PPS calculation engine (ESCAL100)
     @rule_id:CAL100-000
     Scenario: Reject claims with invalid condition codes
       Given the claim condition code is not in the allowed set
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 58
       And calculation is not executed
 
@@ -102,7 +102,7 @@ Feature: ESRD PPS calculation engine (ESCAL100)
     @rule_id:CAL100-001G
     Scenario: Reject claims with height over 300
       Given the patient height exceeds 300
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 71
       And calculation is not executed
 
@@ -116,7 +116,7 @@ Feature: ESRD PPS calculation engine (ESCAL100)
     @rule_id:CAL100-001H
     Scenario: Reject claims with weight over 500
       Given the patient weight exceeds 500
-      When the pricer validates bill elements
+      When bill elements are validated
       Then the return code is 72
       And calculation is not executed
 
@@ -130,7 +130,7 @@ Feature: ESRD PPS calculation engine (ESCAL100)
     @rule_id:CAL100-008
     Scenario: Compute patient age for factor selection
       Given the claim includes DOB and thru date
-      When the pricer computes patient age
+      When patient age is determined
       Then age is adjusted for birth month relative to service month
       And age is available for factor selection
 
@@ -144,7 +144,7 @@ Feature: ESRD PPS calculation engine (ESCAL100)
     @rule_id:CAL100-003B
     Scenario: Apply age adjustment factor by age band
       Given patient age has been calculated
-      When the pricer selects an age adjustment factor
+      When age adjustment factors are selected
       Then the factor matches the age band logic in the module
       And the factor is stored for payment calculation
 
@@ -158,7 +158,7 @@ Feature: ESRD PPS calculation engine (ESCAL100)
     @rule_id:CAL100-004
     Scenario: Compute BSA adjustment factor
       Given patient height and weight are available
-      When the pricer computes BSA and the BSA factor
+      When BSA is calculated
       Then adult BSA factor is computed from the BSA formula
       And pediatric BSA factor defaults to 1.000
 
@@ -172,7 +172,7 @@ Feature: ESRD PPS calculation engine (ESCAL100)
     @rule_id:CAL100-005
     Scenario: Compute BMI adjustment factor
       Given patient height and weight are available
-      When the pricer computes BMI
+      When BMI is calculated
       Then low BMI factor is applied when criteria are met
       And otherwise BMI factor defaults to 1.000
 
@@ -186,7 +186,7 @@ Feature: ESRD PPS calculation engine (ESCAL100)
     @rule_id:CAL100-016
     Scenario: Compute wage-adjusted payment amount
       Given wage indexes and case-mix factors are available
-      When the pricer computes the wage-adjusted payment amount
+      When the wage-adjusted payment is calculated
       Then the payment uses blend percentages when applicable
       And the final payment amount is produced
 
@@ -200,7 +200,7 @@ Feature: ESRD PPS calculation engine (ESCAL100)
     @rule_id:CAL100-015
     Scenario: Apply condition code add-ons and per-diem adjustments
       Given the claim includes condition and revenue codes
-      When the pricer applies condition code add-ons or per-diem factors
+      When condition code add-ons or per-diem factors apply
       Then add-ons or per-diem adjustments are applied as defined
       And the adjusted payment amount is stored
 
@@ -214,6 +214,6 @@ Feature: ESRD PPS calculation engine (ESCAL100)
     @rule_id:CAL100-016B
     Scenario: Set final payment amount
       Given the payment amount has been computed
-      When the pricer assigns the final payment amount
+      When the final payment is determined
       Then PPS-FINAL-PAY-AMT is set
       And the final amount is ready for output

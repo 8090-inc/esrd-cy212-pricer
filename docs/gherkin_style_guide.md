@@ -20,8 +20,10 @@ Goals:
 - Include `Description:` and `Code Path Citations:` as comments within the rule block.
 
 ## Scenario Conventions
-- Use domain language (e.g., "claim", "adjustment", "return code").
-- Avoid step-by-step variable mutation.
+- Use domain language (e.g., "claim", "adjustment", "return code", "payment amount").
+- Avoid step-by-step variable mutation, memory moves, or internal flags.
+- Avoid component names in steps (e.g., "driver", "calculator", "pricer", "system").
+- Prefer 3–6 steps per scenario (Given/When/Then + 1–2 Ands).
 - Prefer one scenario per business rule outcome.
 - Use Scenario Outline for enumerations (e.g., revenue/condition codes).
 
@@ -32,6 +34,7 @@ Goals:
 ## Normalization
 - Do not describe normalization steps in scenarios.
 - Reference normalization entries by ID when the rule depends on derived values.
+- If a rule is purely normalization, move it to `docs/normalization_catalog.md` instead of Gherkin.
 
 ## Traceability
 - Each scenario must map to:
