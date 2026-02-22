@@ -15,6 +15,8 @@ The generated assets are organized into three primary directories:
 These artifacts explain the system and business rules for human Subject Matter Experts (SMEs), Business Analysts, and Software Engineers.
 * **[human_readable_rules.md](docs/human_readable_rules.md)**: Comprehensive rulebook covering logic, validations, formulas, data dictionary structures, and historical routing.
 * **[system_architecture.md](docs/system_architecture.md)**: Mermaid.js UML sequence and component diagrams.
+* **[domain_expert_diagrams.md](docs/domain_expert_diagrams.md)**: Business-facing diagrams for policy and claims SMEs.
+* **[architecture_diagrams.md](docs/architecture_diagrams.md)**: Additional technical diagrams (data flow, wage index path, traceability).
 * **[dependency_structure.md](docs/dependency_structure.md)**: Execution order and dependency constraints.
 * **[normalization_catalog.md](docs/normalization_catalog.md)**: Data prep/derived field specs, separate from business rules.
 * **[gherkin_style_guide.md](docs/gherkin_style_guide.md)** & **[gherkin_exemplars.md](docs/gherkin_exemplars.md)**: Gherkin format and exemplar references.
@@ -23,6 +25,8 @@ These artifacts explain the system and business rules for human Subject Matter E
 * **[policy_version_index.csv](docs/policy_version_index.csv)** & **[policy_gap_log.md](docs/policy_gap_log.md)**: Policy version control and open gaps.
 * **[regression_baseline_cases.csv](docs/regression_baseline_cases.csv)**: Canonical + auto-derived test cases.
 * **[coverage_report.md](docs/coverage_report.md)**: Rule coverage by module.
+* **[claims_expert_narrative.md](docs/claims_expert_narrative.md)**: Plain-English end-to-end pricing narrative for claims experts.
+* **[claims_expert_narrative_validation.md](docs/claims_expert_narrative_validation.md)**: Line-by-line validation of the narrative against COBOL-backed rules.
 * **[implementation_plan.md](docs/implementation_plan.md)** & **[task.md](docs/task.md)**: Project management artifacts.
 * **[policies/](docs/policies/)**: Policy and example source files used for citation work.
 
