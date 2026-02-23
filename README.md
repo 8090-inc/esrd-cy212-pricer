@@ -26,6 +26,7 @@ The generated assets are organized into three primary directories:
 
 ### 1. `docs/` - Human Readable Documentation
 These artifacts explain the system and business rules for human Subject Matter Experts (SMEs), Business Analysts, and Software Engineers.
+Start here for a guided index: **[docs/README.md](docs/README.md)**.
 * **[human_readable_rules.md](docs/human_readable_rules.md)**: Comprehensive rulebook covering logic, validations, formulas, data dictionary structures, and historical routing.
 * **[system_architecture.md](docs/system_architecture.md)**: Mermaid.js UML sequence and component diagrams.
 * **[domain_expert_diagrams.md](docs/domain_expert_diagrams.md)**: Business-facing diagrams for policy and claims SMEs.
