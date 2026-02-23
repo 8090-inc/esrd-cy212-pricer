@@ -55,7 +55,7 @@ Upon Baseline Approval, the JSON files act as the Vendor-Neutral, machine-readab
 ---
 
 ## 3. Policy Traceability
-See `docs/policy_traceability.md` for the policy-to-rule mapping, and `docs/policy_gap_log.md` for documented mismatches and coverage gaps.
+See `docs/legacy/policy_traceability.md` for the policy-to-rule mapping, and `docs/policy/policy_gap_log.md` for documented mismatches and coverage gaps.
 
 ## 4. Dependency Structure
-Execution and calculation dependencies are summarized in `docs/dependency_structure.md`.
+Execution and calculation dependencies are summarized in `docs/overview/dependency_structure.md`.

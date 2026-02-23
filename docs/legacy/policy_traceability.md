@@ -27,5 +27,5 @@ This appendix maps COBOL/DSL rule IDs to authoritative CMS policy sources and se
 | CAL-008/009/010/011/012/013/014 | Pub 100-02 | Ch 11 §60 | Case-mix factors (onset, comorbid, low-volume, rural, training). |
 
 ## Exports
-- CSV: `docs/policy_traceability.csv`
-- JSON: `docs/policy_traceability.json`
+- CSV: `docs/legacy/policy_traceability.csv`
+- JSON: `docs/legacy/policy_traceability.json`

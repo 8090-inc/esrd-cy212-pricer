@@ -1,6 +1,6 @@
 # Architecture Diagrams (New)
 
-This document adds new diagrams to complement `docs/system_architecture.md`. All diagrams use Mermaid for easy rendering.
+This document adds new diagrams to complement `docs/diagrams/system_architecture.md`. All diagrams use Mermaid for easy rendering.
 
 ## 1) System Context and Data Flow
 

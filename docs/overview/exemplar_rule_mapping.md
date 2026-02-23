@@ -1,6 +1,6 @@
 # Exemplar Rule Mapping (sample-10-rules-cms.pdf → Gherkin)
 
-This maps the 10 exemplar rules in `docs/policies/sample-10-rules-cms.pdf` to the authoritative Gherkin rules in `gherkin_rules/`.
+This maps the 10 exemplar rules in `docs/policy/policies/sample-10-rules-cms.pdf` to the authoritative Gherkin rules in `gherkin_rules/`.
 
 | Exemplar Rule | Gherkin Rule IDs | Gherkin Files | Notes |
 | --- | --- | --- | --- |

@@ -1,6 +1,6 @@
 # Claims Expert Narrative Validation
 
-Each sentence from `docs/claims_expert_narrative.md` is validated against COBOL-linked rules.
+Each sentence from `docs/overview/claims_expert_narrative.md` is validated against COBOL-linked rules.
 
 | # | Sentence | Evidence (Rule ID → COBOL lines) | Status | Notes |
 | --- | --- | --- | --- | --- |

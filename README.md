@@ -27,22 +27,22 @@ The generated assets are organized into three primary directories:
 ### 1. `docs/` - Human Readable Documentation
 These artifacts explain the system and business rules for human Subject Matter Experts (SMEs), Business Analysts, and Software Engineers.
 Start here for a guided index: **[docs/README.md](docs/README.md)**.
-* **[human_readable_rules.md](docs/human_readable_rules.md)**: Comprehensive rulebook covering logic, validations, formulas, data dictionary structures, and historical routing.
-* **[system_architecture.md](docs/system_architecture.md)**: Mermaid.js UML sequence and component diagrams.
-* **[domain_expert_diagrams.md](docs/domain_expert_diagrams.md)**: Business-facing diagrams for policy and claims SMEs.
-* **[architecture_diagrams.md](docs/architecture_diagrams.md)**: Additional technical diagrams (data flow, wage index path, traceability).
-* **[dependency_structure.md](docs/dependency_structure.md)**: Execution order and dependency constraints.
-* **[normalization_catalog.md](docs/normalization_catalog.md)**: Data prep/derived field specs, separate from business rules.
-* **[gherkin_style_guide.md](docs/gherkin_style_guide.md)** & **[gherkin_exemplars.md](docs/gherkin_exemplars.md)**: Gherkin format and exemplar references.
-* **[exemplar_rule_mapping.md](docs/exemplar_rule_mapping.md)**: Maps sample rules to authoritative Gherkin rule IDs.
-* **[traceability_schema.md](docs/traceability_schema.md)** & **[traceability_matrix.csv](docs/traceability_matrix.csv)**: COBOL ↔ Gherkin ↔ Policy ↔ Test mapping.
-* **[policy_version_index.csv](docs/policy_version_index.csv)** & **[policy_gap_log.md](docs/policy_gap_log.md)**: Policy version control and open gaps.
-* **[regression_baseline_cases.csv](docs/regression_baseline_cases.csv)**: Canonical + auto-derived test cases.
-* **[coverage_report.md](docs/coverage_report.md)**: Rule coverage by module.
-* **[claims_expert_narrative.md](docs/claims_expert_narrative.md)**: Plain-English end-to-end pricing narrative for claims experts.
-* **[claims_expert_narrative_validation.md](docs/claims_expert_narrative_validation.md)**: Line-by-line validation of the narrative against COBOL-backed rules.
-* **[implementation_plan.md](docs/implementation_plan.md)** & **[task.md](docs/task.md)**: Project management artifacts.
-* **[policies/](docs/policies/)**: Policy and example source files used for citation work.
+* **[human_readable_rules.md](docs/overview/human_readable_rules.md)**: Comprehensive rulebook covering logic, validations, formulas, data dictionary structures, and historical routing.
+* **[system_architecture.md](docs/diagrams/system_architecture.md)**: Mermaid.js UML sequence and component diagrams.
+* **[domain_expert_diagrams.md](docs/diagrams/domain_expert_diagrams.md)**: Business-facing diagrams for policy and claims SMEs.
+* **[architecture_diagrams.md](docs/diagrams/architecture_diagrams.md)**: Additional technical diagrams (data flow, wage index path, traceability).
+* **[dependency_structure.md](docs/overview/dependency_structure.md)**: Execution order and dependency constraints.
+* **[normalization_catalog.md](docs/overview/normalization_catalog.md)**: Data prep/derived field specs, separate from business rules.
+* **[gherkin_style_guide.md](docs/overview/gherkin_style_guide.md)** & **[gherkin_exemplars.md](docs/overview/gherkin_exemplars.md)**: Gherkin format and exemplar references.
+* **[exemplar_rule_mapping.md](docs/overview/exemplar_rule_mapping.md)**: Maps sample rules to authoritative Gherkin rule IDs.
+* **[traceability_schema.md](docs/traceability/traceability_schema.md)** & **[traceability_matrix.csv](docs/traceability/traceability_matrix.csv)**: COBOL ↔ Gherkin ↔ Policy ↔ Test mapping.
+* **[policy_version_index.csv](docs/policy/policy_version_index.csv)** & **[policy_gap_log.md](docs/policy/policy_gap_log.md)**: Policy version control and open gaps.
+* **[regression_baseline_cases.csv](docs/tests/regression_baseline_cases.csv)**: Canonical + auto-derived test cases.
+* **[coverage_report.md](docs/traceability/coverage_report.md)**: Rule coverage by module.
+* **[claims_expert_narrative.md](docs/overview/claims_expert_narrative.md)**: Plain-English end-to-end pricing narrative for claims experts.
+* **[claims_expert_narrative_validation.md](docs/overview/claims_expert_narrative_validation.md)**: Line-by-line validation of the narrative against COBOL-backed rules.
+* **[implementation_plan.md](docs/overview/implementation_plan.md)** & **[task.md](docs/overview/task.md)**: Project management artifacts.
+* **[policies/](docs/policy/policies/)**: Policy and example source files used for citation work.
 
 ### 2. `gherkin_rules/` - Machine Readable Business Logic (Gherkin)
 These files are the authoritative, SME-readable rule specifications in Gherkin (`.feature`). They are denormalized and intent-focused, avoiding COBOL control flow.

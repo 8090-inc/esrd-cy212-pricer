@@ -2,7 +2,7 @@
 
 Canonical and synthetic test cases used as a regression baseline for the Gherkin rules.
 
-Source of truth: `docs/regression_baseline_cases.csv`.
+Source of truth: `docs/tests/regression_baseline_cases.csv`.
 
 Notes:
 - `TC-EX-*` entries are curated exemplar cases.

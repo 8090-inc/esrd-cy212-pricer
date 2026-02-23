@@ -34,7 +34,7 @@ Goals:
 ## Normalization
 - Do not describe normalization steps in scenarios.
 - Reference normalization entries by ID when the rule depends on derived values.
-- If a rule is purely normalization, move it to `docs/normalization_catalog.md` instead of Gherkin.
+- If a rule is purely normalization, move it to `docs/overview/normalization_catalog.md` instead of Gherkin.
 
 ## Traceability
 - Each scenario must map to:

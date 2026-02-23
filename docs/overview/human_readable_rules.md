@@ -218,10 +218,10 @@ This baseline document acts as a repository for establishing rule taxonomy, iden
 ---
 
 ## 6. Policy Traceability
-Full policy-to-rule mapping: `docs/policy_traceability.md`.
+Full policy-to-rule mapping: `docs/legacy/policy_traceability.md`.
 
 ## 7. Policy Gaps & Mismatches
-Discrepancy log: `docs/policy_gap_log.md`.
+Discrepancy log: `docs/policy/policy_gap_log.md`.
 
 ---
 
