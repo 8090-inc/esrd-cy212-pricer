@@ -1,11 +1,21 @@
 # ESRD CY21.2 Mainframe Pricer - Reverse Engineering Artifacts
 
-CMS ESRD PPS Pricer v2021.2 — COBOL mainframe source code that calculates Medicare reimbursement for dialysis facility claims. Prices outpatient dialysis treatments for patients with End-Stage Renal Disease under the Prospective Payment System. Includes 25 calculation modules spanning rate years 2005–2021, a driver program (ESDRV212), bundled services logic (ESBUN210), copybooks for bill input/output, base rates, and wage indices. Repo also contains reverse-engineered artifacts: human-readable rule docs, Gherkin business rules, system architecture diagrams, and validation tooling.
+CMS ESRD PPS Pricer v2021.2 — COBOL mainframe source code that calculates Medicare reimbursement for dialysis facility claims. Prices outpatient dialysis treatments for patients with End-Stage Renal Disease under the Prospective Payment System. Includes historical calculation modules spanning rate years 2005–2021, a driver program, bundled services logic, copybooks for bill input/output, base rates, and wage indices. This repo contains reverse‑engineered artifacts derived from the COBOL, organized for claims and policy experts as well as engineers.
 
 This repository contains both the original legacy COBOL source code for the Center for Medicare and Medicaid Services (CMS) End-Stage Renal Disease (ESRD) CY21.2 Pricer and the comprehensive suite of **reverse-engineered artifacts** generated from analyzing this codebase.
 
-## Project Objective
-The goal of this project was to exhaustively analyze the ~34 files in the ESRD Pricer legacy codebase (calculation modules, driver programs, reference data tables, and copybooks) and synthesize them into modern, human-readable documentation and machine-readable configurations.
+## Project Objective and Scope
+The goal of this project was to reverse‑engineer the ESRD PPS pricer logic from the full CY21.2 COBOL codebase and produce SME‑readable rule documentation with traceability back to COBOL and policy sources.
+
+Reverse‑engineered scope includes:
+- Driver routing and validation logic.
+- Wage index lookups and overrides.
+- CY2021.2 pricing rules (patient‑level and facility‑level adjustments, add‑ons, reductions, outliers).
+- Historical calculation modules for prior years (2005–2020 logic retained for legacy claims).
+- Reference tables and copybooks needed to interpret inputs and outputs.
+
+Out of scope:
+- Execution environment and external system integration details beyond claim I/O contracts.
 
 ## Generated Assets
 
