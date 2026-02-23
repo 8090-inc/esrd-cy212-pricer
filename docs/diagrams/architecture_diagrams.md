@@ -40,7 +40,7 @@ flowchart TD
     WageStart[Wage Index Needed] --> Special[Special Payment Indicator?]
     Special -- Yes --> SpecWI[Use Provider-Supplied Wage Index]
     Special -- No --> Child[Children's Hospital Override?]
-    Child -- Yes --> ChildWI[Use Children’s Hospital Override Index]
+    Child -- Yes --> ChildWI[Use Children's Hospital Override Index]
     Child -- No --> CBSA[Lookup CBSA Wage Index]
     CBSA --> Cap[Apply 5% Decrease Cap (if enabled)]
     Cap --> WageDone[Wage Index Selected]
