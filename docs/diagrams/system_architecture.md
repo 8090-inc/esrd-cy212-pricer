@@ -23,7 +23,7 @@ graph TD
     class WAGE,RTC,BILL db
     
     subgraph Reference Tables
-        ESCHI[ESCHI151 - Childrens Hosp]
+        ESCHI[ESCHI151 - Children's Hosp]
         ESWRT[ESWRT151 - MSA Wage]
         ESCOM[ESCOM151 - Composite CBSA]
         ESBUN[ESBUN210 - Bundled CBSA]
@@ -75,9 +75,9 @@ sequenceDiagram
     else 2011-2013 Pacific Island Override (DRV-004)
         DRV->>FISS: Return Early with Payment Exception (RTC 01)
     else Standard Execution Route
-        note over DRV: 0800-FIND-BUNDLED-CBSA-WI
+        Note over DRV: 0800-FIND-BUNDLED-CBSA-WI
         DRV->>DRV: Search ESBUN210 Table for Wage Index
-        note over DRV: Dispatch Logic (DRV-005)
+        Note over DRV: Dispatch Logic (DRV-005)
         
         alt B-THRU-DATE in 2021
             DRV->>CALC: CALL ESCAL212 USING BILL-NEW-DATA, PPS-DATA-ALL, WAGE-REC

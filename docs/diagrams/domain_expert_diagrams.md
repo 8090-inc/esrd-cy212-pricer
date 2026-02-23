@@ -48,7 +48,7 @@ flowchart TD
     A[Patient Characteristics] --> B[Age Category]
     A --> C[Body Surface Area (BSA)]
     A --> D[Body Mass Index (BMI)]
-    A --> E[Dialysis Onset (<=120 days)]
+    A --> E[Dialysis Onset (120 days or less)]
     A --> F[Comorbidities (Single Highest)]
     B --> G[Patient-Level Adjustment Factor]
     C --> G
