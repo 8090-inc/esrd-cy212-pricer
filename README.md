@@ -15,7 +15,10 @@ Reverse‑engineered scope includes:
 - Reference tables and copybooks needed to interpret inputs and outputs.
 
 Out of scope:
-- Execution environment and external system integration details beyond claim I/O contracts.
+- Execution environment details (mainframe job control, file transfer, scheduling, JCL, runtime parameters).
+- External system integration behavior beyond claim I/O contracts (e.g., FISS orchestration, upstream edits).
+- UI, operational workflows, or reimbursement appeal processes.
+- Non‑COBOL policy interpretation not encoded in the pricer (policy text is cited only where it maps to COBOL logic).
 
 ## Generated Assets
 
